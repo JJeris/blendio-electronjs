@@ -1,7 +1,12 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { app, shell, BrowserWindow, ipcMain } from 'electron';
+import { join } from 'path';
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import icon from '../../resources/icon.png?asset';
+import { blenderRepoPathRepo } from './db';
+import { 
+  insertPythonScript, fetchPythonScripts, deletePythonScript,
+  insertLaunchArgument, updateLaunchArgument, fetchLaunchArguments, deleteLaunchArgument
+ } from './ipc';
 
 function createWindow() {
   // Create the browser window.
@@ -50,7 +55,53 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.handle('repo-fetch', (_, id, limit) => {
+    return blenderRepoPathRepo.fetch(id, limit);
+  });
+
+  ipcMain.handle('repo-insert', (_, repo) => {
+    blenderRepoPathRepo.insert(repo);
+  });
+
+  ipcMain.handle('repo-update', (_, repo) => {
+    blenderRepoPathRepo.update(repo);
+  });
+
+  ipcMain.handle('repo-remove', (_, id) => {
+    blenderRepoPathRepo.remove(id);
+  });
+
+
+  //
+  ipcMain.handle('insert-launch-argument', async (_event, argumentString, projectFileId = null, pythonScriptId = null) => {
+    return await insertLaunchArgument(_event, argumentString, projectFileId, pythonScriptId);
+  });
+
+  ipcMain.handle('update-launch-argument', async (_event, id, isDefault) => {
+    return await updateLaunchArgument(_event, id, isDefault);
+  });
+
+  ipcMain.handle('fetch-launch-arguments', async (_event, id = null, limit = null, argumentString = null) => {
+    return await fetchLaunchArguments(_event, id, limit, argumentString);
+  });
+
+  ipcMain.handle('delete-launch-argument', async (_event, id) => {
+    return await deleteLaunchArgument(_event, id);
+  });
+
+  //
+  ipcMain.handle('insert-python-script', async (_event) => {
+    return await insertPythonScript(_event);
+  });
+
+  ipcMain.handle('fetch-python-script', async (_event, id = null, limit = null, scriptFilePath = null) => {
+    return await fetchPythonScripts(null, id, limit, scriptFilePath);
+  });
+  
+  ipcMain.handle('delete-python-script', async (_event, id) => {
+    return await deletePythonScript(null, id);
+  });
+  
 
   createWindow()
 

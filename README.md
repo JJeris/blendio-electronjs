@@ -32,3 +32,35 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+
+cs src-tauri
+cargo install sqlx-cli --no-default-features --features sqlite
+sqlx database create --database-url sqlite:///C:/Users/J/AppData/Roaming/com.bakalaurs.blendio-tauri/test.db
+sqlx migrate add create_users_table
+sqlx migrate run --database-url sqlite:///C:/Users/J/AppData/Roaming/com.bakalaurs.blendio-tauri/test.db
+sqlx migrate run --database-url sqlite:///C:\Users\J\AppData\Roaming\com.bakalaurs.blendio-tauri\test.db
+
+TODO:
+- Do electronJS equivalent.
+OK- db set up models and migratios
+OK- Python scripts
+OK- Launch arguments
+- Blender installation locations
+- Blender download
+- Blender installation
+- Blender uninstallation
+- Blender launch (basic).
+- Project files
+- Reveal, 
+- archive, 
+- create, 
+- open.
+- Read in existing Blender versions (?)
+
+
+- Finish projektējums
+- Code analysis.
+- Performance analysis
+- Results
+- Theory.
