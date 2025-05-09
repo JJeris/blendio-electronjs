@@ -1,0 +1,51 @@
+import React, { useEffect, useState } from "react";
+
+const DownloadPopup = () => {
+    const [repoPaths, setRepoPaths] = useState([]);
+
+    useEffect(() => {
+        fetchPaths();
+    }, []);
+
+    const closeWindow = async () => {
+    };
+
+    const fetchPaths = async () => {
+    };
+
+    const handleSelect = async (path) => {
+        await closeWindow();
+    };
+
+    const handleUseDefault = async () => {
+        await closeWindow();
+    };
+
+    return (
+        <div className="p-4 text-sm">
+            <h2 className="text-lg font-bold mb-2">Choose Download Location</h2>
+            <button
+                className="mb-2 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={handleUseDefault}
+            >
+                Use Default Directory {repoPaths?.find((e) => e?.is_default === true)?.repo_directory_path ? repoPaths?.find((e) => e?.is_default === true)?.repo_directory_path : repoPaths[0]?.repo_directory_path}
+            </button>
+            <br />
+            <h2 className="text-lg font-bold mb-2">Other</h2>
+            <ul className="space-y-2 mt-4">
+                {repoPaths.map((path) => (
+                    <li key={path.id}>
+                        <button
+                            className="w-full text-left px-2 py-1 border rounded hover:bg-gray-100"
+                            onClick={() => handleSelect(path.repo_directory_path)}
+                        >
+                            {path.repo_directory_path}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default DownloadPopup;

@@ -5,7 +5,17 @@ import icon from '../../resources/icon.png?asset';
 import { blenderRepoPathRepo } from './db';
 import { 
   insertPythonScript, fetchPythonScripts, deletePythonScript,
-  insertLaunchArgument, updateLaunchArgument, fetchLaunchArguments, deleteLaunchArgument
+  insertLaunchArgument, updateLaunchArgument, fetchLaunchArguments, deleteLaunchArgument,
+  insertBlenderVersionInstallationLocation,
+  updateBlenderVersionInstallationLocation,
+  deleteBlenderVersionInstallationLocation,
+  fetchBlenderVersionInstallationLocations,
+  insertInstalledBlenderVersion,
+  insertAndRefreshInstalledBlenderVersions,
+  updateInstalledBlenderVersion,
+  fetchInstalledBenderVersions,
+  uninstallAndDeleteInstalledBlenderVersionData,
+  launchBlenderVersionWithLaunchArgs
  } from './ipc';
 
 function createWindow() {
@@ -54,25 +64,49 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.handle('repo-fetch', (_, id, limit) => {
-    return blenderRepoPathRepo.fetch(id, limit);
+  // Installed Blender Versions
+  ipcMain.handle('insert-installed-blender-version', async (_event, executableFilePath) => {
+    return insertInstalledBlenderVersion(_event, executableFilePath);
   });
 
-  ipcMain.handle('repo-insert', (_, repo) => {
-    blenderRepoPathRepo.insert(repo);
+  ipcMain.handle('insert-and-refresh-installed-blender-versions', async (_event) => {
+    return insertAndRefreshInstalledBlenderVersions(_event);
   });
 
-  ipcMain.handle('repo-update', (_, repo) => {
-    blenderRepoPathRepo.update(repo);
+  ipcMain.handle('update-installed-blender-version', async (_event, id, isDefault) => {
+    return updateInstalledBlenderVersion(_event, id, isDefault);
   });
 
-  ipcMain.handle('repo-remove', (_, id) => {
-    blenderRepoPathRepo.remove(id);
+  ipcMain.handle('fetch-installed-blender-versions', async (_event, id = null, limit = null, executableFilePath = null) => {
+    return fetchInstalledBenderVersions(_event, id, limit, executableFilePath);
   });
 
+  ipcMain.handle('uninstall-and-delete-installed-blender-version-data', async (_event, id) => {
+    return uninstallAndDeleteInstalledBlenderVersionData(_event, id);
+  });
 
-  //
+  ipcMain.handle('launch-blender-version-with-launch-args', async (_event, id, launchArgumentsId = null, pythonScriptId = null) => {
+    return launchBlenderVersionWithLaunchArgs(_event, id, launchArgumentsId, pythonScriptId);
+  });
+
+  // BlenderRepoPaths
+  ipcMain.handle('insert-blender-version-installation-location', async (_event) => {
+    return await insertBlenderVersionInstallationLocation(_event);
+  });
+
+  ipcMain.handle('update-blender-version-installation-location', async (_event, id, isDefault) => {
+    return await updateBlenderVersionInstallationLocation(_event, id, isDefault);
+  });
+
+  ipcMain.handle('fetch-blender-version-installation-locations', async (_event, id = null, limit = null, repoDirectoryPath = null) => {
+    return await fetchBlenderVersionInstallationLocations(_event, id, limit, repoDirectoryPath);
+  });
+
+  ipcMain.handle('delete-blender-version-installation-location', async (_event, id) => {
+    return await deleteBlenderVersionInstallationLocation(_event, id);
+  });
+
+  // LaunchArguments
   ipcMain.handle('insert-launch-argument', async (_event, argumentString, projectFileId = null, pythonScriptId = null) => {
     return await insertLaunchArgument(_event, argumentString, projectFileId, pythonScriptId);
   });
@@ -89,7 +123,7 @@ app.whenReady().then(() => {
     return await deleteLaunchArgument(_event, id);
   });
 
-  //
+  // PythonScripts
   ipcMain.handle('insert-python-script', async (_event) => {
     return await insertPythonScript(_event);
   });

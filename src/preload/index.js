@@ -3,11 +3,30 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer.
 const api = {
-    fetchRepoPaths: (id = null, limit = null) => ipcRenderer.invoke('repo-fetch', id, limit),
-    insertRepoPath: (repo) => ipcRenderer.invoke('repo-insert', repo),
-    updateRepoPath: (repo) => ipcRenderer.invoke('repo-update', repo),
-    deleteRepoPath: (id) => ipcRenderer.invoke('repo-remove', id),
-    
+    // Blender Version Installation Locations (Repo Paths)
+    insertBlenderVersionInstallationLocation: () =>
+        ipcRenderer.invoke('insert-blender-version-installation-location'),
+    updateBlenderVersionInstallationLocation: (id, isDefault) =>
+        ipcRenderer.invoke('update-blender-version-installation-location', id, isDefault),
+    fetchBlenderVersionInstallationLocations: (id = null, limit = null, repoDirectoryPath = null) =>
+        ipcRenderer.invoke('fetch-blender-version-installation-locations', id, limit, repoDirectoryPath),
+    deleteBlenderVersionInstallationLocation: (id) =>
+        ipcRenderer.invoke('delete-blender-version-installation-location', id),
+
+    // Installed Blender Versions
+    insertInstalledBlenderVersion: (executableFilePath) =>
+        ipcRenderer.invoke('insert-installed-blender-version', executableFilePath),
+    insertAndRefreshInstalledBlenderVersions: () =>
+        ipcRenderer.invoke('insert-and-refresh-installed-blender-versions'),
+    updateInstalledBlenderVersion: (id, isDefault) =>
+        ipcRenderer.invoke('update-installed-blender-version', id, isDefault),
+    fetchInstalledBlenderVersions: (id = null, limit = null, executableFilePath = null) =>
+        ipcRenderer.invoke('fetch-installed-blender-versions', id, limit, executableFilePath),
+    uninstallAndDeleteInstalledBlenderVersionData: (id) =>
+        ipcRenderer.invoke('uninstall-and-delete-installed-blender-version-data', id),
+    launchBlenderVersionWithLaunchArgs: (id, launchArgumentsId = null, pythonScriptId = null) =>
+        ipcRenderer.invoke('launch-blender-version-with-launch-args', id, launchArgumentsId, pythonScriptId),
+
     // Python Scripts
     insertPythonScript: () => ipcRenderer.invoke('insert-python-script'),
     fetchPythonScripts: (id = null, limit = null, scriptFilePath = null) => ipcRenderer.invoke('fetch-python-script', id, limit, scriptFilePath),

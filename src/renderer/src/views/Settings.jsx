@@ -13,7 +13,7 @@ const Settings = () => {
 
   const loadPaths = async () => {
     try {
-      const paths = await window.api.fetchRepoPaths(null, null);
+      const paths = await window.api.fetchBlenderVersionInstallationLocations(null, null, null);
       setRepoPaths(paths);
     } catch (error) {
       console.error("Failed to fetch paths:", error);
@@ -40,6 +40,8 @@ const Settings = () => {
 
   const handleAddPath = async () => {
     try {
+      await window.api.insertBlenderVersionInstallationLocation();
+      await loadPaths();
     } catch (error) {
       console.error("Failed to insert path:", error);
     }
@@ -47,14 +49,9 @@ const Settings = () => {
 
   const handleSetDefaultBlenderInstallationPaths = async (selectedId) => {
     try {
-      const target = repoPaths.find((e) => e.id === selectedId);
-      if (!target) return;
-
-      const updatedRepo = {
-        ...target,
-        is_default: !target.is_default
-      };
-      await window.api.updateRepoPath(updatedRepo);
+      console.log(selectedId);
+      console.log(repoPaths.find((e) => e.id === selectedId).is_default);
+      await window.api.updateBlenderVersionInstallationLocation(selectedId, repoPaths.find((e) => e.id === selectedId).is_default);
       await loadPaths();
     } catch (error) {
       console.error("Failed to update default status:", error);
@@ -63,6 +60,8 @@ const Settings = () => {
 
   const handleSetDefaultLaunchArg = async (selectedId) => {
     try {
+      await window.api.updateLaunchArgument(selectedId, launchArgs.find((e) => e.id === selectedId).is_default);
+      await loadLaunchArgs();
     } catch (error) {
       console.error("Failed to update default status for launch argument:", error);
     }
@@ -71,7 +70,7 @@ const Settings = () => {
 
   const handleDeleteBlenderVersionInstallationPath = async (id) => {
     try {
-      await window.api.deleteRepoPath(id);
+      await window.api.deleteBlenderVersionInstallationLocation(id);
       await loadPaths();
     } catch (error) {
       console.error("Failed to delete path:", error);

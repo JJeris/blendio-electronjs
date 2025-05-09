@@ -21,9 +21,9 @@ function fetch(id = null, limit = null, argumentString = null) {
     }
 }
 
-function update(script) {
+function update(arg) {
     const stmt = db.prepare(`UPDATE launch_arguments SET is_default = ?, argument_string = ?, last_used_project_file_id = ?, last_used_python_script_id = ?, modified = CURRENT_TIMESTAMP, accessed = CURRENT_TIMESTAMP WHERE id = ?`);
-    stmt.run(script.script_file_path, script.id);
+    stmt.run(arg.is_default, arg.argument_string, arg.last_used_project_file_id, arg.last_used_python_script_id, arg.id);
 }
 
 function remove(id) {

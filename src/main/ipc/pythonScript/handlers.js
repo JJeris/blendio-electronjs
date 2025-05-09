@@ -22,9 +22,9 @@ export async function insertPythonScript(_) {
         const script = new PythonScript({
             id: uuidv4(),
             script_file_path: filePath,
-            created: now,
-            modified: now,
-            accessed: now
+            created: new Date().toISOString(),
+            modified: new Date().toISOString(),
+            accessed: new Date().toISOString(),
         })
         pythonScriptRepo.insert(script);
         return script;

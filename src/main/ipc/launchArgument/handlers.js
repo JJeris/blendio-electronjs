@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { LaunchArgument } from "../../models";
 import { launchArgumentRepo } from "../../db";
 
+// Saglabāt launch argument string vērtību
 export async function insertLaunchArgument(_, argumentString, projectFileId = null, pythonScriptId = null) {
     try {
         const existing = launchArgumentRepo.fetch(null, null, argumentString);
@@ -14,16 +15,15 @@ export async function insertLaunchArgument(_, argumentString, projectFileId = nu
             return entry.id;
         }
 
-        const now = new Date().toISOString();
         const newEntry = new LaunchArgument({
             id: uuidv4(),
             is_default: false,
             argument_string: argumentString,
             last_used_project_file_id: projectFileId,
             last_used_python_script_id: pythonScriptId,
-            created: now,
-            modified: now,
-            accessed: now
+            created: new Date().toISOString(),
+            modified: new Date().toISOString(),
+            accessed: new Date().toISOString()
         });
 
         launchArgumentRepo.insert(newEntry);
@@ -41,9 +41,9 @@ export async function updateLaunchArgument(_, id, isDefault) {
             return;
         }
 
-        if (isDefault === true) {
-            const entry = results[0];
-            entry.is_default = false;
+        const entry = new LaunchArgument(results[0]);
+        if (isDefault === 1) {
+            entry.is_default = 0;
             launchArgumentRepo.update(entry);
         } else {
             const entries = launchArgumentRepo.fetch();
@@ -60,7 +60,6 @@ export async function updateLaunchArgument(_, id, isDefault) {
     }
 }
 
-
 export async function fetchLaunchArguments(_, id = null, limit = null, argumentString = null) {
     try {
         const results = launchArgumentRepo.fetch(id, limit, argumentString);
@@ -71,7 +70,6 @@ export async function fetchLaunchArguments(_, id = null, limit = null, argumentS
         return [];
     }
 }
-
 
 export async function deleteLaunchArgument(_, id) {
     try {

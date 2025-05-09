@@ -46,7 +46,8 @@ TODO:
 OK- db set up models and migratios
 OK- Python scripts
 OK- Launch arguments
-- Blender installation locations
+OK- Blender installation locations
+- Update the sql for both apps to use normal boolean type and maybe normal timestamp type.
 - Blender download
 - Blender installation
 - Blender uninstallation
