@@ -47,20 +47,23 @@ OK- db set up models and migratios
 OK- Python scripts
 OK- Launch arguments
 OK- Blender installation locations
-- Update the sql for both apps to use normal boolean type and maybe normal timestamp type.
-- Blender download
-- Blender installation
-- Blender uninstallation
-- Blender launch (basic).
-- Project files
-- Reveal, 
-- archive, 
-- create, 
-- open.
-- Read in existing Blender versions (?)
+OK- Blender download
+- Fix download notif.
+OK- Blender installation
+OK- Blender uninstallation
+OK- Blender launch (basic).
+OK- Project files
+OK- Reveal, 
+OK- archive, 
+OK- create, 
+OK- open.
+OK- Read in existing Blender versions (?)
+- Update Blender installation to, after download, check if entry exists. If exists, then handle accordingly, ideally, delete old entry and old files, start fresh. Both frameworks.
 
 
+- Update specification.
 - Finish projektējums
+- Compare the code to fix any mistakes or misaligned code, that would hinder analysis.
 - Code analysis.
 - Performance analysis
 - Results

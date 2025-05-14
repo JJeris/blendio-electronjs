@@ -1,0 +1,41 @@
+export async function downloadFile(url, filePath, buttonId) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Starting...";
+
+    const progressHandler = ({ filePath: progressPath, percent }) => {
+        if (progressPath === filePath) {
+            const btn = document.getElementById(buttonId);
+            if (btn) {
+                btn.textContent = `Downloading... ${percent}%`;
+                btn.disabled = true;
+            }
+        }
+    };
+
+    try {
+        // Register per-download progress handler
+        window.api.onDownloadProgress(progressHandler);
+
+        await window.api.downloadFile(url, filePath);
+
+        const finishedButton = document.getElementById(buttonId);
+        if (finishedButton) {
+            finishedButton.textContent = originalText;
+            finishedButton.disabled = false;
+        }
+    } catch (e) {
+        console.error("Download failed:", e);
+        const errorButton = document.getElementById(buttonId);
+        if (errorButton) {
+            errorButton.textContent = "Error";
+            errorButton.disabled = false;
+        }
+    } finally {
+        // Clean up the listener for this download
+        window.api.removeDownloadProgressListener(progressHandler);
+    }
+}

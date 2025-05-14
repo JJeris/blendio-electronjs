@@ -10,35 +10,55 @@ const LaunchBlenderPopup = () => {
     const needsPythonFile = /(?:^|\s)(--python|-P)\s*$/.test(launchArgs.trim());
 
     useEffect(() => {
-        fetchPythonScripts();
-        fetchLaunchArgs();
+        loadPythonScripts();
+        loadLaunchArgs();
     }, []);
 
     const closeWindow = async () => {
+        window.close(); 
     };
 
-    const fetchPythonScripts = async () => {
+    const loadPythonScripts = async () => {
         try {
-        } catch (e) {
-            console.error("Failed to fetch recent python scripts:", e);
+            const scripts = await window.api.fetchPythonScripts(null, 20, null);
+            setRecentPythonScripts(scripts);
+        } catch (error) {
+            console.error("Failed to fetch python scripts:", error);
         }
     };
 
-    const fetchLaunchArgs = async () => {
+    const loadLaunchArgs = async () => {
         try {
-        } catch (e) {
-            console.error("Failed to fetch recent launch arguments:", e);
+            const args = await window.api.fetchLaunchArguments(null, null, null);
+            setRecentLaunchArgs(args);
+        } catch (error) {
+            console.error("Failed to fetch launch arguments:", error);
         }
     };
 
     const handlePythonFileSelect = async () => {
         try {
+            const pythonScript = await window.api.insertPythonScript();
+            setSelectedPythonScript(pythonScript);
+            console.log(pythonScript.script_file_path)
+            setPythonFilePath(pythonScript.script_file_path);
+            loadPythonScripts();
         } catch (e) {
             console.error("Failed to select python file:", e);
         }
     };
 
     const handleLaunch = async () => {
+        try {
+            await window.api.send("launch-blender-instance-requested", { 
+                pythonScriptId: selectedPythonScript?.id, 
+                launchArgs: launchArgs.trim() 
+            });
+            await closeWindow();
+        } catch (err) {
+            console.error("Failed to launch blender version:", err);
+            await closeWindow();
+        }
     };
 
     return (

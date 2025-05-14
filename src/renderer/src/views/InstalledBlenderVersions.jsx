@@ -6,10 +6,38 @@ export default function InstalledBlenderVersions() {
 
     useEffect(() => {
         loadInstalledBlenderVersions();
+
+        const onLaunchBlenderInstanceRequested = async ({pythonScriptId, launchArgs}) => {
+            const versionId = pendingLaunchVersionRef.current;
+            if (!versionId) {
+                console.error("Missing versionId — did you forget to set the ref?");
+                return;
+            }
+
+            let launchArgumentId = null;
+            try {
+                if (launchArgs && launchArgs.trim() !== "") {
+                    launchArgumentId = await window.api.insertLaunchArgument(launchArgs.trim(), null, pythonScriptId || null);
+                }
+                await window.api.launchBlenderVersionWithLaunchArgs(versionId, launchArgumentId || null, pythonScriptId || null);
+                await loadInstalledBlenderVersions();
+            } catch (err) {
+                console.error("Failed to launch Blender version from popup:", err);
+            } finally {
+                pendingLaunchVersionRef.current = null;
+            }
+        };
+        window.api.receive("launch-blender-instance-requested", onLaunchBlenderInstanceRequested);
+        return () => {
+            window.api.removeEventListener("launch-blender-instance-requested", onLaunchBlenderInstanceRequested);
+        };
     }, []);
 
     const loadInstalledBlenderVersions = async () => {
         try {
+            await window.api.insertAndRefreshInstalledBlenderVersions();
+            const versions = await window.api.fetchInstalledBlenderVersions(null, null, null);
+            setInstalledBlenderVersions(versions);
         } catch (e) {
             console.error("Failed to load installed Blender versions:", e);
         }
@@ -17,13 +45,17 @@ export default function InstalledBlenderVersions() {
 
     const handleSetDefault = async (selectedId) => {
         try {
+            await window.api.updateInstalledBlenderVersion(selectedId, installedBlenderVersions.find((e) => e.id === selectedId).is_default);
+            await loadInstalledBlenderVersions();
         } catch (e) {
             console.error("Failed to set default Blender version:", e);
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (selectedId) => {
         try {
+            await window.api.uninstallAndDeleteInstalledBlenderVersionData(selectedId);
+            await loadInstalledBlenderVersions();
         } catch (e) {
             console.error("Failed to delete Blender version:", e);
         }
@@ -32,6 +64,11 @@ export default function InstalledBlenderVersions() {
     const handleLaunch = async (id) => {
         pendingLaunchVersionRef.current = id;
         try {
+            window.api.instancePopupWindow(
+                "launch-blender-version-popup",
+                "Launch Blender Version",
+                "popup/LaunchBlenderPopup"
+            );
         } catch (e) {
             console.error("Failed to open launch popup:", e);
         }

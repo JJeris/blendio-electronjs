@@ -6,11 +6,48 @@ export default function ProjectFiles() {
 
     useEffect(() => {
         loadProjectFiles();
+        const onCreateProjectFileConfirmed = async ({fileName, versionId}) => {
+            try {
+                await window.api.createNewProjectFile(versionId, fileName);
+                await loadProjectFiles();
+            } catch (err) {
+                console.error("Failed to create new project file from popup:", err);
+            }
+        };
+        const onOpenProjectFileConfirmed = async ({versionId, pythonScriptId, launchArgs}) => {
+            const projectFileId = pendingOpenProjectRef.current;
+            if (!projectFileId) {
+                console.error("Missing projectFileId — did you forget to set the ref?");
+                return;
+            }
 
+            let launchArgumentId = null;
+            try {
+                if (launchArgs && launchArgs.trim() !== "") {
+                    launchArgumentId = await window.api.insertLaunchArgument(launchArgs.trim(), projectFileId, pythonScriptId || null);
+                }
+                console.log(projectFileId, versionId, pythonScriptId || null, launchArgumentId);
+                await window.api.openBlendFile(projectFileId, versionId, launchArgumentId || null, pythonScriptId || null);
+                await loadProjectFiles();
+            } catch (err) {
+                console.error("Failed to launch Blender version from popup:", err);
+            } finally {
+                pendingOpenProjectRef.current = null;
+            }
+        };
+        window.api.receive("create-project-file-confirmed", onCreateProjectFileConfirmed);
+        window.api.receive("open-project-file-confirmed", onOpenProjectFileConfirmed);
+        return () => {
+            window.api.removeEventListener("create-project-file-confirmed", onCreateProjectFileConfirmed);
+            window.api.removeEventListener("open-project-file-confirmed", onOpenProjectFileConfirmed);
+        };
     }, []);
 
     const loadProjectFiles = async () => {
         try {
+            await window.api.insertAndRefreshBlendFiles();
+            const files = await window.api.fetchBlendFiles(null, null, null);
+            setProjectFiles(files);
         } catch (e) {
             console.error("Failed to load .blend project files:", e);
         }
@@ -19,6 +56,11 @@ export default function ProjectFiles() {
     const handleOpen = async (id) => {
         pendingOpenProjectRef.current = id;
         try {
+            window.api.instancePopupWindow(
+                "launch-project-file-popup",
+                "Launch Project File",
+                "popup/LaunchBlendPopup",
+            );
         } catch (e) {
             console.error("Failed to open .blend file:", e);
         }
@@ -26,6 +68,8 @@ export default function ProjectFiles() {
 
     const handleDelete = async (id) => {
         try {
+            await window.api.deleteBlendFile(id);
+            await loadProjectFiles();
         } catch (e) {
             console.error("Failed to delete .blend file:", e);
         }
@@ -33,6 +77,7 @@ export default function ProjectFiles() {
 
     const handleRevealInExplorer = async (id) => {
         try {
+            await window.api.revealProjectFileInLocalFileSystem(id);
         } catch (e) {
             console.error("Failed to reveal .blend file:", e);
         }
@@ -40,6 +85,7 @@ export default function ProjectFiles() {
 
     const handleInsertIntoArchive = async (id) => {
         try {
+            await window.api.createProjectFileArchiveFile(id);
         } catch (e) {
             console.error("Failed to insert .blend file into archive:", e);
         }
@@ -47,17 +93,15 @@ export default function ProjectFiles() {
 
     const handleCreateNewBlendFile = async () => {
         try {
+            window.api.instancePopupWindow(
+                "create-new-project-file-popup",
+                "Create New Project File",
+                "popup/CreateBlendPopup",
+            );
         } catch (e) {
             console.error("Failed to open popup for creating new .blend file:", e);
         }
     };
-
-    const handleInsertLaunchArgument = async (argumentString, projectFileId, pythonScriptId) => {
-        try {
-        } catch (e) {
-            console.error("Failed to insert launch argument into the db", e);
-        }
-    }
 
     return (
         <div className="p-4">

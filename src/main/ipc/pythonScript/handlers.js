@@ -9,11 +9,11 @@ export async function insertPythonScript(_) {
         const filePath = await getFileFromFileExplorer();
         if (!filePath) {
             // TODO return since the user didnt select anything.
-            return { error: "" }
+            return null
         }
         const existingScripts = pythonScriptRepo.fetch(null, null, filePath);
         if (existingScripts.length > 0) {
-            const existing = existingScripts[0];
+            const existing = new PythonScript(existingScripts[0]);
             existing.modified = new Date().toISOString();
             existing.accessed = new Date().toISOString();
             pythonScriptRepo.update(existing);

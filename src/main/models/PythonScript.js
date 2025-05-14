@@ -6,11 +6,11 @@ export class PythonScript {
       modified = new Date().toISOString(),
       accessed = new Date().toISOString()
     }) {
-      this.id = id;
-      this.script_file_path = script_file_path;
-      this.created = created;
-      this.modified = modified;
-      this.accessed = accessed;
+        this.id = id;
+        this.script_file_path = script_file_path;
+        this.created = created;
+        this.modified = modified;
+        this.accessed = accessed;
     }
   }
   

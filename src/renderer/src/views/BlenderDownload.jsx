@@ -1,5 +1,5 @@
-// src/views/BlenderDownload.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { downloadFile } from "../utils/web";
 
 export default function BlenderDownload() {
     const [downloadableBuilds, setDownloadableBuilds] = useState([]);
@@ -8,11 +8,26 @@ export default function BlenderDownload() {
     useEffect(() => {
         loadBlenderBuilds();
 
+        const onPathSelected = async ({ path }) => {
+            const pending = pendingDownloadRef.current;
+            if (path && pending) {
+                const { build, url, fileName, buttonId } = pending;
+                pendingDownloadRef.current = null;
+                await downloadFile(url, `${path}\\${fileName}`, buttonId);
+                await window.api.downloadAndInstallBlenderVersion(`${path}\\${fileName}`, build);
+            }
+        };
 
+        window.api.receive("download-path-selected", onPathSelected);
+        return () => {
+            window.api.removeEventListener("download-path-selected", onPathSelected);
+        };
     }, []);
 
     const loadBlenderBuilds = async () => {
         try {
+            const builds = await window.api.getDownloadableBlenderVersionData();
+            setDownloadableBuilds(builds);
         } catch (e) {
             console.error("Failed to fetch downloadable blender versions:", e);
         }
@@ -20,6 +35,11 @@ export default function BlenderDownload() {
 
     const handleOpenPopup = async () => {
         try {
+            window.api.instancePopupWindow(
+                "download-popup",
+                "Choose Download Location",
+                "popup/DownloadPopup"
+            );
         } catch (e) {
             console.error("Failed to open popup:", e);
         }

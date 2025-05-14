@@ -30,40 +30,37 @@ export async function insertInstalledBlenderVersion(_, executableFilePath) {
             accessed: new Date().toISOString(),
         });
         installedBlenderVersionRepo.insert(entry);
-        console.log('Inserted Blender version:', entry);
         return null;
     } catch (err) {
-        console.error("Failed to launch Blender:", err);
-        return { error: "Failed to launch Blender" };
+        console.error("Failed to insert Blender version:", err);
+        return { error: "Failed to insert Blender version" };
     }
 }
 
-export function insertAndRefreshInstalledBlenderVersions() {
+export async function insertAndRefreshInstalledBlenderVersions() {
     try {
         const blenderRepoPaths = blenderRepoPathRepo.fetch(null, null, null);
         for (const repoPath of blenderRepoPaths) {
-            console.log('Scanning repo:', repoPath);
-
             const entries = fs.readdirSync(repoPath.repo_directory_path, { withFileTypes: true });
-
             for (const entry of entries) {
-                if (!entry.isDirectory()) continue;
-
+                if (!entry.isDirectory()) {
+                    continue;
+                }
                 const launcherPath = path.join(repoPath.repo_directory_path, entry.name, "blender-launcher.exe");
-                if (!fs.existsSync(launcherPath)) continue;
-
-                console.log('Found potential Blender version at:', launcherPath);
-
+                if (!fs.existsSync(launcherPath)) {
+                    continue;
+                }
                 const existingEntries = installedBlenderVersionRepo.fetch(null, null, launcherPath);
-                if (existingEntries.length > 0) continue;
-
+                if (existingEntries.length > 0) {
+                    continue;
+                }
                 const result = insertInstalledBlenderVersion(null, launcherPath);
-                if (result?.error) return result;
+                if (result?.error) {
+                    return result;
+                }
             }
         }
-
         return null;
-
     } catch (err) {
         console.error('Failed to refresh installed Blender versions:', err);
         return { error: 'Refresh failed' };
@@ -112,12 +109,12 @@ export async function uninstallAndDeleteInstalledBlenderVersionData(_, id) {
             return { error: "No Blender version found" };
         }
         const entry = new InstalledBlenderVersion(installedBlenderVersionList[0]);
-        deleteDirectory(entry.installation_directory_path);
-        installedBlenderVersionRepo.remove(entry);
+        await deleteDirectory(entry.installation_directory_path);
+        installedBlenderVersionRepo.remove(entry.id);
         return null;
     } catch (err) {
-        console.error("Failed to launch Blender:", err);
-        return { error: "Failed to launch Blender" };
+        console.error("Failed to delete Blender:", err);
+        return { error: "Failed to delete Blender" };
     }
 }
 
@@ -140,7 +137,7 @@ export async function launchBlenderVersionWithLaunchArgs(_, id, launchArgumentsI
             const argEntry = new LaunchArgument(launchArgumentList[0]);
             launchArgumentRepo.update(argEntry);
 
-            const parsedArgs = argEntry.argumentString.trim().split(/\s+/);
+            const parsedArgs = argEntry.argument_string.trim().split(/\s+/);
             finalLaunchArgs.push(...parsedArgs);
         }
         if (pythonScriptId != null) {
@@ -156,7 +153,6 @@ export async function launchBlenderVersionWithLaunchArgs(_, id, launchArgumentsI
                 finalLaunchArgs.push(scriptEntry.script_file_path);
             }
         }
-        console.log("Launching:", instance.executableFilePath, finalLaunchArgs);
         await launchExecutable(instance.executable_file_path, finalLaunchArgs);
         return null;
     } catch (err) {
@@ -217,10 +213,10 @@ export async function downloadAndInstallBlenderVersion(_, archiveFilePath, downl
             modified: new Date().toISOString(),
             accessed: new Date().toISOString()
         });
-        let installationDirectoryPath = extractArchive(archiveFilePath);
+        let installationDirectoryPath = await extractArchive(archiveFilePath);
         entry.installation_directory_path = installationDirectoryPath;
-        entry.executable_file_path = installationDirectoryPath + "blender-launcher.exe"
-        deleteFile(archiveFilePath);
+        entry.executable_file_path = path.join(installationDirectoryPath, "blender-launcher.exe");
+        await deleteFile(archiveFilePath);
         installedBlenderVersionRepo.insert(entry);
         return null;
     } catch (err) {
@@ -234,7 +230,7 @@ export async function insertBlenderVersionInstallationLocation() {
     try {
         const repoDirectoryPath = await getDirectoryFromFileExplorer();
         if (!repoDirectoryPath) {
-            return { error: "" }
+            return null;
         }
         const existingScripts = blenderRepoPathRepo.fetch(null, null, repoDirectoryPath);
         if (existingScripts && existingScripts.length > 0) {
@@ -250,7 +246,6 @@ export async function insertBlenderVersionInstallationLocation() {
         });
         blenderRepoPathRepo.insert(entry);
         return null;
-
     } catch (err) {
         console.error("Failed to insert Blender version installation location:", err);
         return { error: "Failed to insert location" };
@@ -265,8 +260,8 @@ export async function updateBlenderVersionInstallationLocation(_, id, isDefault)
             return { error: "" }
         }
         const entry = new BlenderRepoPath(results[0]);
-        if (isDefault === 1) {
-            entry.is_default = 0;
+        if (isDefault === true) {
+            entry.is_default = false;
             blenderRepoPathRepo.update(entry);
         } else {
             const entries = blenderRepoPathRepo.fetch();
@@ -288,7 +283,7 @@ export async function fetchBlenderVersionInstallationLocations(_, id = null, lim
     try {
         let results = blenderRepoPathRepo.fetch(id, limit, repoDirectoryPath);
         return results;
-    } catch (error) {
+    } catch (err) {
         return [];
     }
 }

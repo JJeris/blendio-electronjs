@@ -1,22 +1,34 @@
 import React, { useEffect, useState } from "react";
 
 const CreateBlendPopup = () => {
-    const [versions, setVersions] = useState([]);
+    const [installedBlenderVersions, setInstalledBlenderVersions] = useState([]);
     const [fileName, setFileName] = useState("");
     const [selectedVersionId, setSelectedVersionId] = useState(null);
 
     useEffect(() => {
-        fetchVersions();
+        loadInstalledBlenderVersions();
     }, []);
 
     const closeWindow = async () => {
+        window.close(); 
     };
 
-    const fetchVersions = async () => {
+    const loadInstalledBlenderVersions = async () => {
+        try {
+            await window.api.insertAndRefreshInstalledBlenderVersions();
+            const versions = await window.api.fetchInstalledBlenderVersions(null, null, null);
+            setInstalledBlenderVersions(versions);
+        } catch (e) {
+            console.error("Failed to load installed Blender versions:", e);
+        }
     };
 
     const handleCreate = async () => {
         if (!fileName || !selectedVersionId) return;
+        await window.api.send("create-project-file-confirmed", { 
+            fileName, 
+            versionId: selectedVersionId 
+        });
         await closeWindow();
     };
 
@@ -34,13 +46,12 @@ const CreateBlendPopup = () => {
 
             <label className="block mb-2">Select Blender Version</label>
             <ul className="space-y-2 mb-4">
-                {versions.map((v) => (
+                {installedBlenderVersions.map((v) => (
                     <li key={v.id}>
                         <button
                             className={`w-full text-left px-2 py-1 border rounded hover:bg-gray-100 ${selectedVersionId === v.id ? "bg-blue-100 border-blue-400" : ""
                                 }`}
                             onClick={() => {
-                                    console.log(v.id)
                                     setSelectedVersionId(v.id)
                                 }
                             }

@@ -1,24 +1,27 @@
+import { ProjectFile } from '../models/ProjectFile.js';
 import db from './db.js';
 
-function insert(entry) {
+function insert(file) {
     const stmt = db.prepare(`INSERT INTO project_files (id, file_path, file_name, associated_series_json, last_used_blender_version_id) VALUES (?, ?, ?, ?, ?) ON CONFLICT(file_path) DO NOTHING`);
-    stmt.run(entry.id, entry.script_file_path);
+    stmt.run(file.id, file.file_path, file.file_name, file.associated_series_json, file.last_used_blender_version_id);
 }
 
 function fetch(id = null, limit = null, filePath = null) {
+    let rows;
     if (id) {
         const stmt = db.prepare(`SELECT * FROM project_files WHERE id = ?`);
-        return stmt.all(id);
+        rows = stmt.all(id);
     } else if (limit) {
         const stmt = db.prepare(`SELECT * FROM project_files LIMIT ?`);
-        return stmt.all(limit);
+        rows = stmt.all(limit);
     } else if (filePath) {
         const stmt = db.prepare(`SELECT * FROM project_files WHERE file_path = ?`);
-        return stmt.all();
+        rows = stmt.all(filePath);
     } else {
         const stmt = db.prepare(`SELECT * FROM project_files`);
-        return stmt.all();
+        rows = stmt.all();
     }
+    return rows.map(row => new ProjectFile(row));
 }
 
 function update(file) {

@@ -1,19 +1,37 @@
-import React from 'react';
-import { BrowserRouter as Router, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
 import AppRouter from './router';
 import TitleBar from './components/titleBar/TitleBar';
 
+
+const RedirectFromQuery = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const targetRoute = searchParams.get('route');
+        if (targetRoute && location.pathname === '/') {
+            navigate(targetRoute, { replace: true });
+        }
+    }, [location]);
+
+    return null;
+};
+
 const AppContent = () => {
     const location = useLocation();
-    // Only show title bar if we're not in a popup route
     const showTitleBar = !location.pathname.startsWith('/popup');
+
     return (
         <>
+            <RedirectFromQuery />
             {showTitleBar && <TitleBar />}
             <AppRouter />
         </>
     );
 };
+
 const App = () => (
     <Router>
         <AppContent />

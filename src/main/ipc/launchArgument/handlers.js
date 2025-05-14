@@ -42,8 +42,8 @@ export async function updateLaunchArgument(_, id, isDefault) {
         }
 
         const entry = new LaunchArgument(results[0]);
-        if (isDefault === 1) {
-            entry.is_default = 0;
+        if (isDefault === true) {
+            entry.is_default = false;
             launchArgumentRepo.update(entry);
         } else {
             const entries = launchArgumentRepo.fetch();

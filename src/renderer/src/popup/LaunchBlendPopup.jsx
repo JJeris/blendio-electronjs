@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 const LaunchBlendPopup = () => {
-    const [versions, setVersions] = useState([]);
+    const [installedBlenderVersions, setInstalledBlenderVersions] = useState([]);
     const [selectedVersionId, setSelectedVersionId] = useState(null);
     const [launchArgs, setLaunchArgs] = useState("");
     const [pythonFilePath, setPythonFilePath] = useState("");
@@ -13,39 +13,61 @@ const LaunchBlendPopup = () => {
     const needsPythonFile = /(?:^|\s)(--python|-P)\s*$/.test(launchArgs.trim());
 
     useEffect(() => {
-        fetchVersions();
-        fetchPythonScripts();
-        fetchLaunchArgs();
+        loadInstalledBlenderVersions();
+        loadPythonScripts();
+        loadLaunchArgs();
     }, []);
 
     const closeWindow = async () => {
+        window.close();
     };
 
-    const fetchVersions = async () => {
-    };
-    const fetchPythonScripts = async () => {
+    const loadInstalledBlenderVersions = async () => {
         try {
+            await window.api.insertAndRefreshInstalledBlenderVersions();
+            const versions = await window.api.fetchInstalledBlenderVersions(null, null, null);
+            setInstalledBlenderVersions(versions);
         } catch (e) {
-            console.error("Failed to fetch recent python scripts:", e);
+            console.error("Failed to load installed Blender versions:", e);
         }
     };
-    const fetchLaunchArgs = async () => {
+
+    const loadPythonScripts = async () => {
         try {
-        } catch (e) {
-            console.error("Failed to fetch recent launch arguments:", e);
+            const scripts = await window.api.fetchPythonScripts(null, 20, null);
+            setRecentPythonScripts(scripts);
+        } catch (error) {
+            console.error("Failed to fetch python scripts:", error);
+        }
+    };
+
+    const loadLaunchArgs = async () => {
+        try {
+            const args = await window.api.fetchLaunchArguments(null, null, null);
+            setRecentLaunchArgs(args);
+        } catch (error) {
+            console.error("Failed to fetch launch arguments:", error);
         }
     };
 
     const handlePythonFileSelect = async () => {
         try {
+            const pythonScript = await window.api.insertPythonScript();
+            setSelectedPythonScript(pythonScript);
+            setPythonFilePath(pythonScript.script_file_path);
+            loadPythonScripts();
         } catch (e) {
             console.error("Failed to select python file:", e);
         }
     };
-
     const handleOpen = async () => {
         if (!selectedVersionId) return;
         if (needsPythonFile && !selectedPythonScript) return;
+        await window.api.send("open-project-file-confirmed", { 
+            versionId: selectedVersionId,
+            pythonScriptId: selectedPythonScript?.id || null,
+            launchArgs: launchArgs.trim(),
+        });
         await closeWindow();
     };
 
@@ -164,24 +186,24 @@ const LaunchBlendPopup = () => {
             </div>
 
             <br />
-            {versions.length > 0 && (
+            {installedBlenderVersions.length > 0 && (
                 <button
                     className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
                     onClick={() => {
-                        const defaultVersion = versions.find((v) => v.is_default === true) || versions[0];
+                        const defaultVersion = installedBlenderVersions.find((v) => v.is_default === true) || installedBlenderVersions[0];
                         if (defaultVersion) setSelectedVersionId(defaultVersion.id);
                     }}
                 >
                     Use Default Version{" "}
-                    {versions.find((v) => v.is_default)?.version
-                        ? versions.find((v) => v.is_default).version + " " + versions.find((v) => v.is_default).variant_type
-                        : versions[0]?.version + " " + versions[0]?.variant_type}
+                    {installedBlenderVersions.find((v) => v.is_default)?.version
+                        ? installedBlenderVersions.find((v) => v.is_default).version + " " + installedBlenderVersions.find((v) => v.is_default).variant_type
+                        : installedBlenderVersions[0]?.version + " " + installedBlenderVersions[0]?.variant_type}
                 </button>
             )}
             <br />
             <label className="block mb-2">Select Blender Version</label>
             <ul className="space-y-2 mb-4">
-                {versions.map((v) => (
+                {installedBlenderVersions.map((v) => (
                     <li key={v.id}>
                         <button
                             className={`w-full text-left px-2 py-1 border rounded hover:bg-gray-100 ${selectedVersionId === v.id ? "bg-blue-100 border-blue-400" : ""

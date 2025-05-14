@@ -4,21 +4,38 @@ const DownloadPopup = () => {
     const [repoPaths, setRepoPaths] = useState([]);
 
     useEffect(() => {
-        fetchPaths();
+        loadPaths();
     }, []);
 
     const closeWindow = async () => {
+        window.close(); 
     };
 
-    const fetchPaths = async () => {
+    const loadPaths = async () => {
+        try {
+            const paths = await window.api.fetchBlenderVersionInstallationLocations(null, null, null);
+            setRepoPaths(paths);
+        } catch (error) {
+            console.error("Failed to fetch paths:", error);
+        }
     };
 
     const handleSelect = async (path) => {
-        await closeWindow();
+        try {
+            await window.api.send("download-path-selected", { path });
+            await closeWindow();
+        } catch (error) {
+            console.error("Failed to send path:", error);
+        }
     };
 
     const handleUseDefault = async () => {
-        await closeWindow();
+        try {
+            await window.api.send("download-path-selected", { path: repoPaths.find((e) => e.is_default === true)?.repo_directory_path ? repoPaths.find((e) => e.is_default === true)?.repo_directory_path : repoPaths[0].repo_directory_path });
+            await closeWindow();
+        } catch (error) {
+            console.error("Failed to send default path:", error);
+        }
     };
 
     return (

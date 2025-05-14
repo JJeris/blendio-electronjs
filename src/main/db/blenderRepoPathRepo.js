@@ -1,3 +1,4 @@
+import { BlenderRepoPath } from '../models/BlenderRepoPath.js';
 import db from './db.js';
 
 function insert(repo) {
@@ -6,19 +7,21 @@ function insert(repo) {
 }
 
 function fetch(id = null, limit = null, repoDirectoryPath = null) {
+    let rows;
     if (id) {
         const stmt = db.prepare(`SELECT * FROM blender_repo_paths WHERE id = ?`);
-        return stmt.all(id);
+        rows = stmt.all(id);
     } else if (limit) {
         const stmt = db.prepare(`SELECT * FROM blender_repo_paths LIMIT ?`);
-        return stmt.all(limit);
+        rows = stmt.all(limit);
     } else if (repoDirectoryPath) {
         const stmt = db.prepare(`SELECT * FROM blender_repo_paths WHERE repo_directory_path = ?`);
-        return stmt.all();
+        rows = stmt.all(repoDirectoryPath);
     } else {
         const stmt = db.prepare(`SELECT * FROM blender_repo_paths`);
-        return stmt.all();
+        rows = stmt.all();
     }
+    return rows.map(row => new BlenderRepoPath(row));
 }
 
 function update(repo) {

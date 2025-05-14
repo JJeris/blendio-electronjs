@@ -1,3 +1,4 @@
+import { PythonScript } from '../models/PythonScript.js';
 import db from './db.js';
 
 function insert(entry) {
@@ -6,19 +7,21 @@ function insert(entry) {
 }
 
 function fetch(id = null, limit = null, scriptFilePath = null) {
+    let rows;
     if (id) {
         const stmt = db.prepare(`SELECT * FROM python_scripts WHERE id = ?`);
-        return stmt.all(id);
+        rows = stmt.all(id);
     } else if (limit) {
         const stmt = db.prepare(`SELECT * FROM python_scripts LIMIT ?`);
-        return stmt.all(limit);
+        rows = stmt.all(limit);
     } else if (scriptFilePath) {
         const stmt = db.prepare(`SELECT * FROM python_scripts WHERE script_file_path = ?`);
-        return stmt.all();
+        rows = stmt.all(scriptFilePath);
     } else {
         const stmt = db.prepare(`SELECT * FROM python_scripts`);
-        return stmt.all();
+        rows = stmt.all();
     }
+    return rows.map(row => new PythonScript(row));
 }
 
 function update(script) {
