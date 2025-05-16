@@ -1,11 +1,13 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import { v4 as uuidv4 } from "uuid";
 import path from 'path';
-import { InstalledBlenderVersion, LaunchArgument, ProjectFile, PythonScript } from "../../models";
+import { ProjectFile } from "../../models";
 import { installedBlenderVersionRepo, launchArgumentRepo, projectFileRepo, pythonScriptRepo } from "../../db";
-import { archiveFile, deleteFile, getDirectoryFromFileExplorer, launchExecutable, openInFileExplorer } from "../fileSystemUtility/handlers";
+import { archiveFile, deleteFile, getDirectoryFromFileExplorer, launchExecutable, openInFileExplorer, showAskNotification, showOkNotification } from "../fileSystemUtility/handlers";
 import fs from 'fs';
 import os from 'os';
- import { IMPORT_BPY, SAVE_AS_MAINFILE } from "./consts";
+import { IMPORT_BPY, SAVE_AS_MAINFILE } from "./consts";
 
 export async function insertBlendFile(_, filePath) {
     try {
@@ -20,21 +22,18 @@ export async function insertBlendFile(_, filePath) {
             accessed: new Date().toISOString()
         });
         projectFileRepo.insert(entry);
-        return null;
+        return;
     } catch (err) {
-        console.error("Failed to insert Project file:", err);
-        return { error: "Failed to insert Project file" };
+        await showOkNotification(`Failed to insert project file: ${err}`, "error");
+        throw err;
     }
 }
 
-// export async function updateBlendFile(_, id, associatedSeries, lastUsedBlenderVersionId) {
-//     try {
-//         return null;
-//     } catch (err) {
-//         console.error('updateBlendFile failed:', err);
-//     }
-// }
-
+/**
+ * ID: PF_002
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function insertAndRefreshBlendFiles(_) {
     try {
         const home = os.homedir();
@@ -65,8 +64,8 @@ export async function insertAndRefreshBlendFiles(_) {
                 if (!fs.existsSync(filePath)) {
                     const currentEntries = projectFileRepo.fetch(null, null, filePath);
                     if (currentEntries && currentEntries.length > 0) {
-                        let entryToRemove = new ProjectFile(currentEntries[0]);
-                        await projectFileRepo.remove(entryToRemove.id);
+                        let entryToRemove = currentEntries[0];
+                        projectFileRepo.remove(entryToRemove.id);
                     }
                     continue;
                 } else {
@@ -87,7 +86,7 @@ export async function insertAndRefreshBlendFiles(_) {
                     });
                     projectFileRepo.insert(newProjectFileEntry);
                 } else {
-                    let existingEntry = new ProjectFile(existingEntries[0]);
+                    let existingEntry = existingEntries[0];
                     let associatedSeriesJson = JSON.parse(existingEntry.associated_series_json);
                     if (!associatedSeriesJson.includes(seriesName)) {
                         associatedSeriesJson.push(seriesName);
@@ -99,60 +98,88 @@ export async function insertAndRefreshBlendFiles(_) {
             }
             fs.writeFileSync(recentFilesTxtPath, refreshedRecentFilesTxtContent);
         }
-        return null;
+        const currentEntries = projectFileRepo.fetch(null, null, null);
+        for (const entry of currentEntries) {
+            if (!fs.existsSync(entry.file_path)) {
+                projectFileRepo.remove(entry.id);
+            }
+        }
+        return;
     } catch (err) {
-        console.error("insertAndRefreshBlendFiles failed:", err);
-        return { error: "Failed to refresh recent .blend files" };
+        await showOkNotification(`Failed to insert and refresh project files: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PF_003
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function fetchBlendFiles(_, id = null, limit = null, filePath = null) {
     try {
         let results = projectFileRepo.fetch(id, limit, filePath);
+        // Sort DESC
+        results.sort((a, b) => b.accessed.localeCompare(a.accessed));
         return results;
     } catch (err) {
-        return [];
+        await showOkNotification(`Failed to fetch project files: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PF_004
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function deleteBlendFile(_, id) {
     try {
+        const confirmation = await showAskNotification("Are you sure you want to delete this .blend file?", "warning");
+        if (confirmation === false) {
+            return;
+        }
         let projectFileList = projectFileRepo.fetch(id);
         if (!projectFileList || projectFileList.length === 0) {
-            return { error: "No Project file found" };
+            throw "Failed to fetch project file by ID";
         }
-        const entry = new ProjectFile(projectFileList[0]);
+        const entry = projectFileList[0];
         await deleteFile(entry.file_path);
         projectFileRepo.remove(entry.id);
-        return null;
+        return;
     } catch (err) {
-        console.error("Failed to delete Project file:", err);
-        return { error: "Failed to delete Project file" };
+        await showOkNotification(`Failed to delete project file: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PF_005
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function openBlendFile(_, id, installedBlenderVersionId, launchArgumentsId = null, pythonScriptId = null) {
     try {
         const projectFileList = projectFileRepo.fetch(id, null, null);
         if (!projectFileList || projectFileList.length === 0) {
-            return { error: "Project file not found" };
+            throw "Failed to fetch installed project file by ID";
         }
-        const projectFile = new ProjectFile(projectFileList[0]);
+        const projectFile = projectFileList[0];
         projectFile.last_used_blender_version_id = installedBlenderVersionId;
         projectFileRepo.update(projectFile);
         const installedBlenderVersionList = installedBlenderVersionRepo.fetch(installedBlenderVersionId, null, null);
         if (!installedBlenderVersionList || installedBlenderVersionList.length === 0) {
-            return { error: "Blender version not found" };
+            throw "Failed to fetch installed Blender version by ID";
         }
-        const blenderVersion = new InstalledBlenderVersion(installedBlenderVersionList[0]);
+        const blenderVersion = installedBlenderVersionList[0];
         installedBlenderVersionRepo.update(blenderVersion);
         let finalLaunchArgs = [projectFile.file_path];
         if (launchArgumentsId != null) {
             const launchArgumentList = launchArgumentRepo.fetch(launchArgumentsId, null, null);
             if (!launchArgumentList || launchArgumentList.length === 0) {
-                return { error: "Launch arguments not found" };
+                throw "Failed to fetch installed launch argument by ID";
             }
-            const argEntry = new LaunchArgument(launchArgumentList[0]);
+            const argEntry = launchArgumentList[0];
             launchArgumentRepo.update(argEntry);
             const parsedArgs = argEntry.argument_string.trim().split(/\s+/);
             finalLaunchArgs.push(...parsedArgs);
@@ -160,9 +187,9 @@ export async function openBlendFile(_, id, installedBlenderVersionId, launchArgu
         if (pythonScriptId != null) {
             const pythonScriptList = pythonScriptRepo.fetch(pythonScriptId, null, null);
             if (!pythonScriptList || pythonScriptList.length === 0) {
-                return { error: "Python script not found" };
+                throw "Failed to fetch installed python script by ID";
             }
-            const scriptEntry = new PythonScript(pythonScriptList[0]);
+            const scriptEntry = pythonScriptList[0];
             pythonScriptRepo.update(scriptEntry);
             if (!finalLaunchArgs.includes("--python")) {
                 finalLaunchArgs.push("--python", scriptEntry.script_file_path);
@@ -171,25 +198,29 @@ export async function openBlendFile(_, id, installedBlenderVersionId, launchArgu
             }
         }
         await launchExecutable(blenderVersion.executable_file_path, finalLaunchArgs);
-        console.log("FINISHED");
-        return null;
+        return;
     } catch (err) {
-        console.error("Failed to open .blend file:", err);
-        return { error: "Failed to open .blend file" };
+        await showOkNotification(`Failed to open project file: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PF_006
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function createNewProjectFile(_, installedBlenderVersionId, fileName) {
     try {
         const directoryPath = await getDirectoryFromFileExplorer();
         if (!directoryPath) {
-            return null; // User cancelled dialog or no path selected
+            return; // User cancelled dialog or no path selected
         }
         if (!fileName.endsWith('.blend')) {
             fileName = `${fileName}.blend`;
         }
         const fullFilePath = path.join(directoryPath, fileName);
-        const pythonCodeExpression = 
+        const pythonCodeExpression =
 `
 ${IMPORT_BPY}
 blend_file_path=r"${fullFilePath}"
@@ -197,45 +228,55 @@ ${SAVE_AS_MAINFILE}
 `;
         let installedBlenderVersionList = installedBlenderVersionRepo.fetch(installedBlenderVersionId, null, null);
         if (!installedBlenderVersionList || installedBlenderVersionList.length === 0) {
-            return { error: "Blender version not found" };
+            throw "Failed to fetch installed Blender version by ID";
         }
-        let entry = new InstalledBlenderVersion(installedBlenderVersionList[0]);
+        let entry = installedBlenderVersionList[0];
         await launchExecutable(entry.executable_file_path, ["--background", "--python-expr", pythonCodeExpression]);
         await insertBlendFile(null, fullFilePath);
-        return null;
+        return;
     } catch (err) {
-        console.error("Failed to create new .blend file:", err);
-        return { error: "Failed to create new .blend file" };
+        await showOkNotification(`Failed to insert project file: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PF_007
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function revealProjectFileInLocalFileSystem(_, id) {
     try {
         let projectFileList = projectFileRepo.fetch(id);
         if (!projectFileList || projectFileList.length === 0) {
-            return { error: "No Project file found" };
+            throw "Failed to fetch project file by ID";
         }
-        const entry = new ProjectFile(projectFileList[0]);
+        const entry = projectFileList[0];
         await openInFileExplorer(entry.file_path);
-        return null;
+        return; 
     } catch (err) {
-        console.error("Failed to reveal Project file:", err);
-        return { error: "Failed to reveal Project file" };
+        await showOkNotification(`Failed to open project file in file explorer: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PF_008
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function createProjectFileArchiveFile(_, id) {
     try {
         const entryList = projectFileRepo.fetch(id, null, null);
         if (!entryList || entryList.length === 0) {
-            return { error: "Project file not found" };
+            throw "Failed to fetch project file by ID";
         }
-        const entry = new ProjectFile(entryList[0]);
+        const entry = entryList[0];
         const archivePath = await archiveFile(entry.file_path);
         await openInFileExplorer(archivePath);
-        return null;
-    } catch (err) {
-        console.error("Failed to create archive file:", err);
-        return { error: "Failed to create archive file" };
+        return; 
+    } catch (err) { 
+        await showOkNotification(`Failed to archive project file: ${err}`, "error");
+        throw err;
     }
 }

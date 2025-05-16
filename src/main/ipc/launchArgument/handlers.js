@@ -1,21 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
 import { LaunchArgument } from "../../models";
 import { launchArgumentRepo } from "../../db";
+import { showAskNotification, showOkNotification } from '../fileSystemUtility/handlers.js';
 
-// Saglabāt launch argument string vērtību
+/**
+ * ID: KP_001
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function insertLaunchArgument(_, argumentString, projectFileId = null, pythonScriptId = null) {
     try {
-        const existing = launchArgumentRepo.fetch(null, null, argumentString);
-        if (existing.length > 0) {
-            const entry = existing[0];
-            const now = new Date().toISOString();
-            entry.accessed = now;
-            entry.modified = now;
-            launchArgumentRepo.update(entry);
-            return entry.id;
+        const results = launchArgumentRepo.fetch(null, null, argumentString);
+        if (results.length > 0) {
+            const existingEntry = results[0];
+            existingEntry.accessed = new Date().toISOString();
+            existingEntry.modified = new Date().toISOString();
+            launchArgumentRepo.update(existingEntry);
+            return existingEntry.id;
         }
-
-        const newEntry = new LaunchArgument({
+        const entry = new LaunchArgument({
             id: uuidv4(),
             is_default: false,
             argument_string: argumentString,
@@ -25,23 +28,26 @@ export async function insertLaunchArgument(_, argumentString, projectFileId = nu
             modified: new Date().toISOString(),
             accessed: new Date().toISOString()
         });
-
-        launchArgumentRepo.insert(newEntry);
-        return newEntry.id;
+        launchArgumentRepo.insert(entry);
+        return entry.id;
     } catch (err) {
-        console.error('insertLaunchArgument failed:', err);
-        return '';
+        await showOkNotification(`Failed to insert launch argument: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: KP_002
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function updateLaunchArgument(_, id, isDefault) {
     try {
         const results = launchArgumentRepo.fetch(id);
         if (results.length === 0) {
-            return;
+            throw "Failed to fetch launch argument by ID";
         }
-
-        const entry = new LaunchArgument(results[0]);
+        const entry = results[0];
         if (isDefault === true) {
             entry.is_default = false;
             launchArgumentRepo.update(entry);
@@ -54,27 +60,46 @@ export async function updateLaunchArgument(_, id, isDefault) {
                     launchArgumentRepo.update(entry);
                 }
             }
+            return;
         }
     } catch (err) {
-        console.error('updateLaunchArgument failed:', err);
+        await showOkNotification(`Failed to update launch arguments: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: KP_003
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function fetchLaunchArguments(_, id = null, limit = null, argumentString = null) {
     try {
         const results = launchArgumentRepo.fetch(id, limit, argumentString);
+        // Sort DESC
         results.sort((a, b) => b.accessed.localeCompare(a.accessed));
         return results;
     } catch (err) {
-        console.error('fetchLaunchArguments failed:', err);
-        return [];
+        await showOkNotification(`Failed to fetch launch arguments: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: KP_004
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function deleteLaunchArgument(_, id) {
     try {
+        const confirmation = await showAskNotification("Are you sure you want to delete this launch argument entry?", "warning");
+        if (confirmation === false) {
+            return;
+        }
         launchArgumentRepo.remove(id);
+        return;
     } catch (err) {
-        console.error('deleteLaunchArgument failed:', err);
+        await showOkNotification(`Failed to delete launch argument: ${err}`, "error");
+        throw err;
     }
 }

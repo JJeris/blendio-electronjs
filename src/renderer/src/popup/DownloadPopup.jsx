@@ -15,8 +15,9 @@ const DownloadPopup = () => {
         try {
             const paths = await window.api.fetchBlenderVersionInstallationLocations(null, null, null);
             setRepoPaths(paths);
-        } catch (error) {
-            console.error("Failed to fetch paths:", error);
+        } catch (err) {
+            setRepoPaths([]);
+            console.error("Failed to fetch paths:", err);
         }
     };
 
@@ -24,8 +25,8 @@ const DownloadPopup = () => {
         try {
             await window.api.send("download-path-selected", { path });
             await closeWindow();
-        } catch (error) {
-            console.error("Failed to send path:", error);
+        } catch (err) {
+            console.error("Failed to send path:", err);
         }
     };
 
@@ -33,27 +34,26 @@ const DownloadPopup = () => {
         try {
             await window.api.send("download-path-selected", { path: repoPaths.find((e) => e.is_default === true)?.repo_directory_path ? repoPaths.find((e) => e.is_default === true)?.repo_directory_path : repoPaths[0].repo_directory_path });
             await closeWindow();
-        } catch (error) {
-            console.error("Failed to send default path:", error);
+        } catch (err) {
+            console.error("Failed to send default path:", err);
         }
     };
 
     return (
-        <div className="p-4 text-sm">
-            <h2 className="text-lg font-bold mb-2">Choose Download Location</h2>
+        <div className="p-4">
+            <h2 className="mb-2">Choose Download Location</h2>
             <button
-                className="mb-2 px-4 py-2 bg-blue-500 text-white rounded"
+                className="mb-2"
                 onClick={handleUseDefault}
             >
                 Use Default Directory {repoPaths?.find((e) => e?.is_default === true)?.repo_directory_path ? repoPaths?.find((e) => e?.is_default === true)?.repo_directory_path : repoPaths[0]?.repo_directory_path}
             </button>
-            <br />
-            <h2 className="text-lg font-bold mb-2">Other</h2>
-            <ul className="space-y-2 mt-4">
+            <h2 className="mb-2">Other</h2>
+            <ul>
                 {repoPaths.map((path) => (
                     <li key={path.id}>
                         <button
-                            className="w-full text-left px-2 py-1 border rounded hover:bg-gray-100"
+                            className="      "
                             onClick={() => handleSelect(path.repo_directory_path)}
                         >
                             {path.repo_directory_path}

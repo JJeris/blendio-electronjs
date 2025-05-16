@@ -1,96 +1,160 @@
-import { dialog, BrowserWindow, app } from 'electron';
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-catch */
+import { dialog, BrowserWindow } from 'electron';
 import path from 'path';
-import decompress from 'decompress';
 import fs from "fs";
 import fsPromise from "fs/promises"
 import { spawn, execFile } from 'child_process';
 import { promisify } from 'util';
 import { is } from '@electron-toolkit/utils';
 import { download } from 'electron-dl';
-import yazl from 'yazl';
+import { extract, Zip, archiveFile as zipLibArchiveFile } from 'zip-lib/lib';
 
-export function instancePopupWindow(label, title, urlPath = '/') {
-    const popupWindow = new BrowserWindow({
-        width: 600,
-        height: 400,
-        title,
-        show: false,
-        autoHideMenuBar: true,
-        resizable: true,
-        alwaysOnTop: true,
-        skipTaskbar: true,
-        webPreferences: {
-            preload: path.join(__dirname, '../preload/index.js'),
-            sandbox: false,
-            devTools: true
-        }
-    });
-
-    popupWindow.on('ready-to-show', () => {
-        popupWindow.show();
-    });
-
-    popupWindow.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url);
-        return { action: 'deny' };
-    });
-
-    // popupWindow.webContents.openDevTools();
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        popupWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?route=/${urlPath}`);
-    } else {
-        popupWindow.loadFile(path.join(__dirname, '../renderer/index.html'), {
-            query: { route: `/${urlPath}` }
+/**
+ * ID: FSU_001
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export function instancePopupWindow(_, label, title, urlPath = '/') {
+    try {
+        const popupWindow = new BrowserWindow({
+            width: 600,
+            height: 400,
+            title,
+            show: false,
+            autoHideMenuBar: true,
+            resizable: true,
+            alwaysOnTop: true,
+            skipTaskbar: true,
+            webPreferences: {
+                preload: path.join(__dirname, '../preload/index.js'),
+                sandbox: false,
+                devTools: true
+            }
         });
+        popupWindow.on('ready-to-show', () => {
+            popupWindow.show();
+        });
+        popupWindow.webContents.setWindowOpenHandler((details) => {
+            shell.openExternal(details.url);
+            return { action: 'deny' };
+        });
+        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+            popupWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?route=/${urlPath}`);
+        } else {
+            popupWindow.loadFile(path.join(__dirname, '../renderer/index.html'), {
+                query: { route: `/${urlPath}` }
+            });
+        }
+        return;
+    } catch (err) {
+        showOkNotification(`Failed to instance popup window: ${err}`, "error");
+        throw err;
     }
-
-    return null;
+ 
 }
 
+/**
+ * ID: FSU_002
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export async function identifyInternetConnection(_) {
+    try {
+        const response = await fetch("https://one.one.one.one/", {signal: AbortSignal.timeout(3000)});
+        return response.ok;
+    } catch (err) {
+        return false;
+    }
+}
+
+/**
+ * ID: FSU_003
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export async function showOkNotification(message, kind) {
+    const win = global.mainWindow;
+    await dialog.showMessageBox(win, {
+      type: kind, // 'info', 'warning', or 'error'
+      message: message,
+      buttons: ['OK'],
+      defaultId: 0,
+    });
+}
+
+/**
+ * ID: FSU_004
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export async function showAskNotification(message, kind) {
+    const win = global.mainWindow;
+    const result = await dialog.showMessageBox(win, {
+      type: kind, // 'info', 'warning', or 'error'
+      message: message,
+      buttons: ['Yes', 'No'],
+      defaultId: 0,
+      cancelId: 1,
+    });
+    return result.response === 0;
+}
+
+/**
+ * ID: FSU_005
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function extractArchive(archiveFilePath) {
     try {
         const extractDir = path.dirname(archiveFilePath);
-        await decompress(archiveFilePath, extractDir);
+        await extract(archiveFilePath, extractDir);
         const archiveName = path.basename(archiveFilePath, path.extname(archiveFilePath));
         return path.join(extractDir, archiveName);
     } catch (err) {
-        console.error(`Failed to extract archive file: ${archiveFilePath}`, err);
-        throw err;
+        throw `Failed to extract archive file: ${err}`;
     }
 }
 
-export async function deleteFile(filePath) {
+/**
+ * ID: FSU_006
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export async function archiveFile(filePath) {
     try {
-        await fsPromise.unlink(filePath);
+        const fileName = path.basename(filePath);
+        const zipPath = filePath.replace(path.extname(filePath), '.zip');
+        await zipLibArchiveFile(filePath, zipPath);
+        return zipPath;
     } catch (err) {
-        console.error(`Failed to delete file: ${filePath}`, err);
-        throw err;
+        throw `Failed to archive file: ${err}`;
     }
 }
 
-export async function deleteDirectory(directoryPath) {
-    try {
-        await fsPromise.rm(directoryPath, {recursive: true, force: true});
-    } catch (err) {
-        console.error(`Failed to delete directory: ${directoryPath}`, err);
-        throw err;
-    }
-}
-
+/**
+ * ID: FSU_007
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function launchExecutable(executableFilePath, args = []) {
     try {
         const execFileAsync = promisify(execFile);
         await execFileAsync(executableFilePath, args);
     } catch (err) {
-        console.error(`Failed to launch executable`, err);
-        throw err;
+        throw `Failed to launch executable: ${err}`;
     }
 }
 
+/**
+ * ID: FSU_008
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function openInFileExplorer(filePath) {
     try {
-         const parentDirectory = path.dirname(filePath);
+        const parentDirectory = path.dirname(filePath);
         if (!parentDirectory) {
             throw "";
         }
@@ -113,13 +177,17 @@ export async function openInFileExplorer(filePath) {
                 return null;
         }
         spawn(command, args, { detached: true, stdio: 'ignore' }).unref();
-        return true;
+        return;
     } catch (err) {
-        console.error("Failed to open file explorer:", err);
-        throw "";
+        throw `Failed to open file in file explorer: ${err}`;
     }
 }
 
+/**
+ * ID: FSU_009
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function getFileFromFileExplorer() {
     try {
         const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
@@ -131,11 +199,16 @@ export async function getFileFromFileExplorer() {
             return null;
         }
         return result.filePaths[0];
-    } catch (error) {
-        throw "";
+    } catch (err) {
+        throw `Failed to get file from file explorer: ${err}`;
     }
 }
 
+/**
+ * ID: FSU_010
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function getDirectoryFromFileExplorer() {
     try {
         const result = await dialog.showOpenDialog(global.mainWindow, {
@@ -147,31 +220,34 @@ export async function getDirectoryFromFileExplorer() {
         }
         return result.filePaths[0];
     } catch (err) {
-        console.error(err);
-        throw err;
+        throw `Failed to get directory from file explorer: ${err}`;
     }
 }
 
-export async function archiveFile(filePath) {
-    const fileName = path.basename(filePath);
-    const zipPath = filePath.replace(path.extname(filePath), '.zip');
-    const zipFile = new yazl.ZipFile();
-    const writeStream = fs.createWriteStream(zipPath);
-    return new Promise((resolve, reject) => {
-        writeStream.on('close', () => resolve(zipPath));
-        writeStream.on('error', (err) => {
-            console.error('Error writing zip file:', err);
-            reject(err);
-        });
-        zipFile.outputStream.pipe(writeStream);
-        try {
-            zipFile.addFile(filePath, fileName, { compress: false }); // no compression
-            zipFile.end();
-        } catch (err) {
-            console.error('Error zipping file:', err);
-            reject(err);
-        }
-    });
+/**
+ * ID: FSU_011
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export async function deleteFile(filePath) {
+    try {
+        await fsPromise.unlink(filePath);
+    } catch (err) {
+        throw `Failed to delete file: ${err}`;
+    }
+}
+
+/**
+ * ID: FSU_012
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
+export async function deleteDirectory(directoryPath) {
+    try {
+        await fsPromise.rm(directoryPath, {recursive: true, force: true});
+    } catch (err) {
+        throw `Failed to delete directory: ${err}`;
+    }
 }
 
 export async function downloadFile(window, url, filePath) {

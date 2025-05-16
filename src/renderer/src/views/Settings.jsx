@@ -15,8 +15,9 @@ const Settings = () => {
         try {
             const paths = await window.api.fetchBlenderVersionInstallationLocations(null, null, null);
             setRepoPaths(paths);
-        } catch (error) {
-            console.error("Failed to fetch paths:", error);
+         } catch (err) {
+            setRepoPaths([]);
+            console.error("Failed to fetch paths:", err);
         }
     };
 
@@ -24,8 +25,9 @@ const Settings = () => {
         try {
             const args = await window.api.fetchLaunchArguments(null, null, null);
             setLaunchArgs(args);
-        } catch (error) {
-            console.error("Failed to fetch launch arguments:", error);
+        } catch (err) {
+            setLaunchArgs([]);
+            console.error("Failed to fetch launch arguments:", err);
         }
     };
 
@@ -33,8 +35,9 @@ const Settings = () => {
         try {
             const scripts = await window.api.fetchPythonScripts(null, null, null);
             setPythonScripts(scripts);
-        } catch (error) {
-            console.error("Failed to fetch python scripts:", error);
+        } catch (err) {
+            setPythonScripts([]);
+            console.error("Failed to fetch python scripts:", err);
         }
     };
 
@@ -42,8 +45,9 @@ const Settings = () => {
         try {
             await window.api.insertBlenderVersionInstallationLocation();
             await loadPaths();
-        } catch (error) {
-            console.error("Failed to insert path:", error);
+        } catch (err) {
+            await loadPaths();
+            console.error("Failed to insert path:", err);
         }
     };
 
@@ -51,8 +55,9 @@ const Settings = () => {
         try {
             await window.api.updateBlenderVersionInstallationLocation(selectedId, repoPaths.find((e) => e.id === selectedId).is_default);
             await loadPaths();
-        } catch (error) {
-            console.error("Failed to update default status:", error);
+        } catch (err) {
+            await loadPaths();
+            console.error("Failed to update default status:", err);
         }
     };
 
@@ -60,18 +65,19 @@ const Settings = () => {
         try {
             await window.api.updateLaunchArgument(selectedId, launchArgs.find((e) => e.id === selectedId).is_default);
             await loadLaunchArgs();
-        } catch (error) {
-            console.error("Failed to update default status for launch argument:", error);
+        } catch (err) {
+            await loadLaunchArgs();
+            console.error("Failed to update default status for launch argument:", err);
         }
     };
-
 
     const handleDeleteBlenderVersionInstallationPath = async (id) => {
         try {
             await window.api.deleteBlenderVersionInstallationLocation(id);
             await loadPaths();
-        } catch (error) {
-            console.error("Failed to delete path:", error);
+        } catch (err) {
+            await loadPaths();
+            console.error("Failed to delete path:", err);
         }
     };
 
@@ -79,8 +85,9 @@ const Settings = () => {
         try {
             await window.api.deleteLaunchArgument(id);
             await loadLaunchArgs();
-        } catch (error) {
-            console.error("Failed to delete launch argument:", error);
+        } catch (err) {
+            await loadLaunchArgs();
+            console.error("Failed to delete launch argument:", err);
         }
     };
 
@@ -88,52 +95,53 @@ const Settings = () => {
         try {
             await window.api.deletePythonScript(id);
             await loadPythonScripts();
-        } catch (error) {
-            console.error("Failed to delete python script:", error);
+        } catch (err) {
+            await loadPythonScripts();
+            console.error("Failed to delete python script:", err);
         }
     };
 
-    return (
+        return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Settings</h1>
-            <h2 className="text-xl font-semibold mt-8 mb-2">Blender installation paths</h2>
+            <h1 className="mb-4">Settings</h1>
+            <h2 className="mt-8 mb-2">Blender installation paths</h2>
             <div className="mb-6">
                 <button
-                    className="mt-2 bg-green-500 text-white px-4 py-2 rounded"
+                    className="mt-2 bg-green-500"
                     onClick={handleAddPath}
                 >
                     Add Path
                 </button>
             </div>
 
-            <table className="w-full border-collapse border text-sm">
+            <table className="border-collapse">
                 <thead>
                     <tr>
-                        <th className="border p-2">Path</th>
-                        <th className="border p-2">Created</th>
-                        <th className="border p-2">Modified</th>
-                        <th className="border p-2">Accessed</th>
-                        <th className="border p-2">Default</th>
-                        <th className="border p-2">Actions</th>
+                        <th className="p-2">Directory path</th>
+                        <th className="p-2">Created</th>
+                        <th className="p-2">Modified</th>
+                        <th className="p-2">Accessed</th>
+                        <th className="p-2">Default</th>
+                        <th className="p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {repoPaths.map((entry) => (
                         <tr key={entry.id}>
-                            <td className="border p-2">{entry.repo_directory_path}</td>
-                            <td className="border p-2">{entry.created}</td>
-                            <td className="border p-2">{entry.modified}</td>
-                            <td className="border p-2">{entry.accessed}</td>
-                            <td className="border p-2 text-center">
+                            <td className="p-2">{entry.repo_directory_path}</td>
+                            <td className="p-2">{entry.created}</td>
+                            <td className="p-2">{entry.modified}</td>
+                            <td className="p-2">{entry.accessed}</td>
+                            <td className="p-2">
                                 <input
                                     type="checkbox"
                                     checked={entry.is_default}
                                     onChange={() => handleSetDefaultBlenderInstallationPaths(entry.id)}
                                 />
                             </td>
-                            <td className="border p-2 text-center">
+                            <td className="p-2">
                                 <button
-                                    className="text-red-500 hover:underline"
+                                    className="text-red-500 "
                                     onClick={() => handleDeleteBlenderVersionInstallationPath(entry.id)}
                                 >
                                     Delete
@@ -144,36 +152,35 @@ const Settings = () => {
                 </tbody>
             </table>
 
-
-            <h2 className="text-xl font-semibold mt-8 mb-2">Launch Arguments</h2>
-            <table className="w-full border-collapse border text-sm mb-6">
+            <h2 className="mt-8 mb-2">Launch Arguments</h2>
+            <table className="border-collapse mb-6">
                 <thead>
                     <tr>
-                        <th className="border p-2">Argument String</th>
-                        <th className="border p-2">Created</th>
-                        <th className="border p-2">Modified</th>
-                        <th className="border p-2">Accessed</th>
-                        <th className="border p-2">Default</th>
-                        <th className="border p-2">Actions</th>
+                        <th className="p-2">Argument String</th>
+                        <th className="p-2">Created</th>
+                        <th className="p-2">Modified</th>
+                        <th className="p-2">Accessed</th>
+                        <th className="p-2">Default</th>
+                        <th className="p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {launchArgs.map((arg) => (
                         <tr key={arg.id}>
-                            <td className="border p-2">{arg.argument_string}</td>
-                            <td className="border p-2">{arg.created}</td>
-                            <td className="border p-2">{arg.modified}</td>
-                            <td className="border p-2">{arg.accessed}</td>
-                            <td className="border p-2 text-center">
+                            <td className="p-2">{arg.argument_string}</td>
+                            <td className="p-2">{arg.created}</td>
+                            <td className="p-2">{arg.modified}</td>
+                            <td className="p-2">{arg.accessed}</td>
+                            <td className="p-2">
                                 <input
                                     type="checkbox"
                                     checked={arg.is_default}
                                     onChange={() => handleSetDefaultLaunchArg(arg.id)}
                                 />
                             </td>
-                            <td className="border p-2 text-center">
+                            <td className="p-2">
                                 <button
-                                    className="text-red-500 hover:underline"
+                                    className="text-red-500 "
                                     onClick={() => handleDeleteLaunchArg(arg.id)}
                                 >
                                     Delete
@@ -184,27 +191,27 @@ const Settings = () => {
                 </tbody>
             </table>
 
-            <h2 className="text-xl font-semibold mt-8 mb-2">Python Scripts</h2>
-            <table className="w-full border-collapse border text-sm">
+            <h2 className="mt-8 mb-2">Python Scripts</h2>
+            <table className="border-collapse">
                 <thead>
                     <tr>
-                        <th className="border p-2">Script Path</th>
-                        <th className="border p-2">Created</th>
-                        <th className="border p-2">Modified</th>
-                        <th className="border p-2">Accessed</th>
-                        <th className="border p-2">Actions</th>
+                        <th className="p-2">Script Path</th>
+                        <th className="p-2">Created</th>
+                        <th className="p-2">Modified</th>
+                        <th className="p-2">Accessed</th>
+                        <th className="p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {pythonScripts.map((script) => (
                         <tr key={script.id}>
-                            <td className="border p-2">{script.script_file_path}</td>
-                            <td className="border p-2">{script.created}</td>
-                            <td className="border p-2">{script.modified}</td>
-                            <td className="border p-2">{script.accessed}</td>
-                            <td className="border p-2 text-center">
+                            <td className="p-2">{script.script_file_path}</td>
+                            <td className="p-2">{script.created}</td>
+                            <td className="p-2">{script.modified}</td>
+                            <td className="p-2">{script.accessed}</td>
+                            <td className="p-2 ">
                                 <button
-                                    className="text-red-500 hover:underline"
+                                    className="text-red-500"
                                     onClick={() => handleDeletePythonScript(script.id)}
                                 >
                                     Delete

@@ -1,38 +1,48 @@
+/* eslint-disable no-unused-vars */
 import { v4 as uuidv4 } from 'uuid'
 import { PythonScript } from '../../models/index.js';
 import pythonScriptRepo from '../../db/pythonScriptRepo.js';
-import { getFileFromFileExplorer } from '../fileSystemUtility/handlers.js';
+import { getFileFromFileExplorer, showAskNotification, showOkNotification } from '../fileSystemUtility/handlers.js';
 
-// Saglabāt nesen izmantoto Python skripta faila lokāciju
+/**
+ * ID: PS_001
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function insertPythonScript(_) {
     try {
         const filePath = await getFileFromFileExplorer();
         if (!filePath) {
-            // TODO return since the user didnt select anything.
-            return null
+            return null;
         }
-        const existingScripts = pythonScriptRepo.fetch(null, null, filePath);
-        if (existingScripts.length > 0) {
-            const existing = new PythonScript(existingScripts[0]);
-            existing.modified = new Date().toISOString();
-            existing.accessed = new Date().toISOString();
-            pythonScriptRepo.update(existing);
-            return new PythonScript(existing);
+        const results = pythonScriptRepo.fetch(null, null, filePath);
+        if (results.length > 0) {
+            const  existingEntry = results[0];
+            existingEntry.modified = new Date().toISOString();
+            existingEntry.accessed = new Date().toISOString();
+            pythonScriptRepo.update(existingEntry);
+            return existingEntry;
         }
-        const script = new PythonScript({
+        const entry = new PythonScript({
             id: uuidv4(),
             script_file_path: filePath,
             created: new Date().toISOString(),
             modified: new Date().toISOString(),
             accessed: new Date().toISOString(),
         })
-        pythonScriptRepo.insert(script);
-        return script;
+        pythonScriptRepo.insert(entry);
+        return entry;
     } catch (err) {
-        return null;
+        await showOkNotification(`Failed to insert python script: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PS_002
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function fetchPythonScripts(_, id = null, limit = null, scriptFilePath = null) {
     try {
         let results = pythonScriptRepo.fetch(id, limit, scriptFilePath);
@@ -40,15 +50,26 @@ export async function fetchPythonScripts(_, id = null, limit = null, scriptFileP
         results.sort((a, b) => b.accessed.localeCompare(a.accessed));
         return results;
     } catch (err) {
-        return [];
+        await showOkNotification(`Failed to fetch python scripts: ${err}`, "error");
+        throw err;
     }
 }
 
+/**
+ * ID: PS_003
+ * Paskaidrojums:
+ * ABC analīzes rezultāts:
+ */
 export async function deletePythonScript(_, id) {
     try {
+        const confirmation = await showAskNotification("Are you sure you want to delete this python script entry?", "warning");
+        if (confirmation === false) {
+            return;
+        }
         pythonScriptRepo.remove(id);
         return;
     } catch (err) {
-        throw new Error('');
+        await showOkNotification(`Failed to delete python script: ${err}`, "error");
+        throw err;
     }
 }

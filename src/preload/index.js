@@ -2,7 +2,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
-const progressListeners = new Set();
 // Custom APIs for renderer.
 const api = {
     // Blender Version Installation Locations (Repo Paths)
@@ -45,33 +44,21 @@ const api = {
 
     // File system utility
     instancePopupWindow: (label, title, urlPath) => ipcRenderer.invoke('instance-popup-window', label, title, urlPath),
+    identifyInternetConnection: () => ipcRenderer.invoke('identify-internet-connection'),
+    showOkNotification: (message, kind) => ipcRenderer.invoke('show-ok-notification', message, kind),
+    showAskNotification: (message, kind) => ipcRenderer.invoke('show-ask-notification', message, kind),
     downloadFile: (url, filePath) => ipcRenderer.invoke('download-file', url, filePath),
 
     // Listeners IPC
-    // onDownloadProgress: (callback) => ipcRenderer.on('download-progress', (_e, data) => callback(data)),
-    // removeDownloadProgressListener: (callback) => ipcRenderer.removeListener('download-progress', callback),
-    onDownloadProgress: (callback) => {
-        const wrapped = (_event, data) => {
-            if (data) callback(data);
-        };
-        progressListeners.add({ original: callback, wrapped });
-        ipcRenderer.on('download-progress', wrapped);
-    },
-
-    removeDownloadProgressListener: (callback) => {
-        const listener = [...progressListeners].find(entry => entry.original === callback);
-        if (listener) {
-            ipcRenderer.removeListener('download-progress', listener.wrapped);
-            progressListeners.delete(listener);
-        }
-    },
-
+    onDownloadProgress: (callback) => ipcRenderer.on('download-progress', (_e, data) => callback(data)),
+    removeDownloadProgressListener: (callback) => ipcRenderer.removeListener('download-progress', callback),
 
     // Channeling
     send: (channel, data) => ipcRenderer.send(channel, data),
     receive: (channel, callback) => ipcRenderer.on(channel, (_event, data) => callback(data)),
     removeEventListener: (channel) => ipcRenderer.removeAllListeners(channel),
 };
+
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -80,7 +67,7 @@ if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld('electron', electronAPI)
         contextBridge.exposeInMainWorld('api', api)
-    } catch (error) {
+    } catch (err) {
         console.error(error)
     }
 } else {

@@ -13,7 +13,7 @@ import {
   insertInstalledBlenderVersion,
   insertAndRefreshInstalledBlenderVersions,
   updateInstalledBlenderVersion,
-  fetchInstalledBenderVersions,
+  fetchInstalledBlenderVersions,
   uninstallAndDeleteInstalledBlenderVersionData,
   launchBlenderVersionWithLaunchArgs,
   getDownloadableBlenderVersionData,
@@ -23,12 +23,14 @@ import {
   insertBlendFile,
   fetchBlendFiles,
   insertAndRefreshBlendFiles,
-  updateBlendFile,
   deleteBlendFile,
   openBlendFile,
   createNewProjectFile,
   revealProjectFileInLocalFileSystem,
-  createProjectFileArchiveFile
+  createProjectFileArchiveFile,
+  identifyInternetConnection,
+  showAskNotification, 
+  showOkNotification
 } from './ipc';
 
 function createWindow() {
@@ -38,6 +40,7 @@ function createWindow() {
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    title: "blendio-electronjs",
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -94,7 +97,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('fetch-installed-blender-versions', async (_event, id = null, limit = null, executableFilePath = null) => {
-    return fetchInstalledBenderVersions(_event, id, limit, executableFilePath);
+    return fetchInstalledBlenderVersions(_event, id, limit, executableFilePath);
   });
 
   ipcMain.handle('uninstall-and-delete-installed-blender-version-data', async (_event, id) => {
@@ -199,12 +202,24 @@ app.whenReady().then(() => {
 
   // File system utility
   ipcMain.handle('instance-popup-window', (_event, label, title, urlPath) => {
-    return instancePopupWindow(label, title, urlPath);
+    return instancePopupWindow(_event, label, title, urlPath);
+  });
+
+  ipcMain.handle('identify-internet-connection', (_event) => {
+    return identifyInternetConnection(_event);
+  });
+
+  ipcMain.handle('show-ok-notification', async (_event, message, kind) => {
+    return await showOkNotification(_event, message, kind);
+  });
+
+  ipcMain.handle('show-ask-notification', async (_event, message, kind) => {
+    return await showAskNotification(_event, message, kind);
   });
 
   ipcMain.handle('download-file', async (event, url, filePath) => {
-      const win = BrowserWindow.fromWebContents(event.sender);
-      return await downloadFile(win, url, filePath);
+    const win = BrowserWindow.fromWebContents(event.sender);
+    return await downloadFile(win, url, filePath);
   });
 
   // Listeners IPC

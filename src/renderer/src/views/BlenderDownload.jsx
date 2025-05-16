@@ -2,12 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { downloadFile } from "../utils/web";
 
 export default function BlenderDownload() {
+    const [isOnline, setIsOnline] = useState(false);
     const [downloadableBuilds, setDownloadableBuilds] = useState([]);
     const pendingDownloadRef = useRef(null);
 
     useEffect(() => {
-        loadBlenderBuilds();
-
+        const initializeView = async () => {
+            const isActiveInternetConnection = await checkInternetConnection();
+            setIsOnline(isActiveInternetConnection);
+            if (isActiveInternetConnection === true) {
+                await loadBlenderBuilds();
+            }
+        }
+        initializeView();
         const onPathSelected = async ({ path }) => {
             const pending = pendingDownloadRef.current;
             if (path && pending) {
@@ -24,12 +31,21 @@ export default function BlenderDownload() {
         };
     }, []);
 
+    const checkInternetConnection = async () => {
+        try {
+            return await window.api.identifyInternetConnection();
+        } catch (err) {
+            console.error("Failed to identify internet connection:", err);
+        }
+    }
+
     const loadBlenderBuilds = async () => {
         try {
             const builds = await window.api.getDownloadableBlenderVersionData();
             setDownloadableBuilds(builds);
-        } catch (e) {
-            console.error("Failed to fetch downloadable blender versions:", e);
+        } catch (err) {
+            setDownloadableBuilds([]);
+            console.error("Failed to fetch downloadable blender versions:", err);
         }
     };
 
@@ -40,8 +56,8 @@ export default function BlenderDownload() {
                 "Choose Download Location",
                 "popup/DownloadPopup"
             );
-        } catch (e) {
-            console.error("Failed to open popup:", e);
+        } catch (err) {
+            console.error("Failed to open popup:", err);
         }
     };
 
@@ -49,27 +65,33 @@ export default function BlenderDownload() {
         pendingDownloadRef.current = { build, url, fileName, buttonId };
         try {
             await handleOpenPopup();
-        } catch (error) {
-            console.error("Failed to open popup:", error);
+        } catch (err) {
+            console.error("Failed to open popup:", err);
         }
     };
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Blender Daily Builds</h1>
-            <table className="w-full border-collapse border text-sm">
+            <h1 className="mb-4">Blender Download (Daily Builds)</h1>
+            <div>
+                Internet connection status:{" "}
+                <span className={isOnline ? "text-green-500" : "text-red-500"}>
+                    {isOnline ? "Online" : "Offline, check connection and reload the page"}
+                </span>
+            </div>
+            <br />
+            <table className="border-collapse">
                 <thead>
                     <tr>
-                        <th className="border p-2">Version</th>
-                        <th className="border p-2">App</th>
-                        <th className="border p-2">Risk</th>
-                        <th className="border p-2">Branch</th>
-                        <th className="border p-2">Platform</th>
-                        <th className="border p-2">Arch</th>
-                        <th className="border p-2">Bit</th>
-                        <th className="border p-2">Extension</th>
-                        <th className="border p-2">Size</th>
-                        <th className="border p-2">Download</th>
+                        <th className="p-2">Version</th>
+                        <th className="p-2">Risk</th>
+                        <th className="p-2">Branch</th>
+                        <th className="p-2">Platform</th>
+                        <th className="p-2">Arch</th>
+                        <th className="p-2">Bit</th>
+                        <th className="p-2">Extension</th>
+                        <th className="p-2">Size</th>
+                        <th className="p-2">Download</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,19 +99,17 @@ export default function BlenderDownload() {
                         const buttonId = `download-btn-${build.file_name}`;
                         return (
                             <tr key={index}>
-                                <td className="border p-2">{build.version}</td>
-                                <td className="border p-2">{build.app}</td>
-                                <td className="border p-2">{build.risk_id}</td>
-                                <td className="border p-2">{build.branch}</td>
-                                <td className="border p-2">{build.platform}</td>
-                                <td className="border p-2">{build.architecture}</td>
-                                <td className="border p-2">{build.bitness}</td>
-                                <td className="border p-2">{build.file_extension}</td>
-                                <td className="border p-2">{build.file_size}</td>
-                                <td className="border p-2">
+                                <td className="p-2">{build.version}</td>
+                                <td className="p-2">{build.risk_id}</td>
+                                <td className="p-2">{build.branch}</td>
+                                <td className="p-2">{build.platform}</td>
+                                <td className="p-2">{build.architecture}</td>
+                                <td className="p-2">{build.bitness}</td>
+                                <td className="p-2">{build.file_extension}</td>
+                                <td className="p-2">{(build.file_size / (1024 * 1024)).toFixed(2)} MB</td>
+                                <td className="p-2">
                                     <button
                                         id={buttonId}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded"
                                         onClick={() => download(build, build.url, build.file_name, buttonId)}
                                     >
                                         Download
@@ -100,7 +120,7 @@ export default function BlenderDownload() {
                     })}
                     {downloadableBuilds.length === 0 && (
                         <tr>
-                            <td colSpan="10" className="text-center p-4">No builds found.</td>
+                            <td colSpan="10" className="p-4">No builds found.</td>
                         </tr>
                     )}
                 </tbody>

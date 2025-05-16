@@ -11,12 +11,17 @@ files:
 asarUnpack:
   - resources/**
 win:
+  target:
+    - msi
   executableName: blendio-electronjs
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+msi:
+  artifactName: "${name}-${version}-installer.${ext}"
+  perMachine: true # optional; installs for all users
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:

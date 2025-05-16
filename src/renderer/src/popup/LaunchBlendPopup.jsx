@@ -27,8 +27,9 @@ const LaunchBlendPopup = () => {
             await window.api.insertAndRefreshInstalledBlenderVersions();
             const versions = await window.api.fetchInstalledBlenderVersions(null, null, null);
             setInstalledBlenderVersions(versions);
-        } catch (e) {
-            console.error("Failed to load installed Blender versions:", e);
+        } catch (err) {
+            setInstalledBlenderVersions([]);
+            console.error("Failed to load installed Blender versions:", err);
         }
     };
 
@@ -36,8 +37,9 @@ const LaunchBlendPopup = () => {
         try {
             const scripts = await window.api.fetchPythonScripts(null, 20, null);
             setRecentPythonScripts(scripts);
-        } catch (error) {
-            console.error("Failed to fetch python scripts:", error);
+        } catch (err) {
+            setRecentPythonScripts([]);
+            console.error("Failed to fetch python scripts:", err);
         }
     };
 
@@ -45,19 +47,22 @@ const LaunchBlendPopup = () => {
         try {
             const args = await window.api.fetchLaunchArguments(null, null, null);
             setRecentLaunchArgs(args);
-        } catch (error) {
-            console.error("Failed to fetch launch arguments:", error);
+        } catch (err) {
+            setRecentLaunchArgs([]);
+            console.error("Failed to fetch launch arguments:", err);
         }
     };
 
     const handlePythonFileSelect = async () => {
         try {
             const pythonScript = await window.api.insertPythonScript();
-            setSelectedPythonScript(pythonScript);
-            setPythonFilePath(pythonScript.script_file_path);
+            if (pythonScript) {
+                setSelectedPythonScript(pythonScript);
+                setPythonFilePath(pythonScript.script_file_path);
+            }
             loadPythonScripts();
-        } catch (e) {
-            console.error("Failed to select python file:", e);
+        } catch (err) {
+            console.error("Failed to select python file:", err);
         }
     };
     const handleOpen = async () => {
@@ -71,15 +76,14 @@ const LaunchBlendPopup = () => {
         await closeWindow();
     };
 
-
     return (
-        <div className="p-4 text-sm">
-            <h2 className="text-lg font-bold mb-2">Open Blend File</h2>
+        <div className="p-4">
+            <h2 className="mb-2">Open Blend File</h2>
 
-            <label className="block mb-2">Launch Arguments</label>
+            <label className="mb-2">Launch Arguments</label>
             <input
                 type="text"
-                className="w-full px-2 py-1 border rounded mb-4"
+                className="mb-4"
                 placeholder="e.g., --background --python"
                 value={launchArgs}
                 onChange={(e) => setLaunchArgs(e.target.value)}
@@ -89,7 +93,7 @@ const LaunchBlendPopup = () => {
 
             {recentLaunchArgs.length > 0 && (
                 <button
-                    className="mb-4 text-xs text-green-600 hover:underline"
+                    className="mb-4"
                     onClick={() => {
                         const defaultArg = recentLaunchArgs.find(arg => arg.is_default) || recentLaunchArgs[0];
                         if (defaultArg) setLaunchArgs(defaultArg.argument_string);
@@ -104,12 +108,11 @@ const LaunchBlendPopup = () => {
 
             {recentLaunchArgs.length > 0 && (
                 <div className="mb-4">
-                    <p className="text-xs mb-1 text-gray-600">Recently Used Launch Args:</p>
-                    <ul className="space-y-1">
+                    <p>Recently Used Launch Args:</p>
+                    <ul>
                         {recentLaunchArgs.map((arg) => (
                             <li key={arg.id}>
                                 <button
-                                    className="text-left text-xs text-blue-600 hover:underline break-all"
                                     onClick={() => setLaunchArgs(arg.argument_string)}
                                 >
                                     {arg.argument_string}
@@ -123,7 +126,7 @@ const LaunchBlendPopup = () => {
             {launchArgs && (
                 <button
                     onClick={() => setLaunchArgs("")}
-                    className="mb-2 text-xs text-red-500 hover:underline"
+                    className="mb-2 text-red-500"
                 >
                     Clear launch arguments
                 </button>
@@ -131,32 +134,24 @@ const LaunchBlendPopup = () => {
 
             <div className="mb-4">
                 <button
-                    className={`px-3 py-1 border rounded text-sm ${needsPythonFile
-                        ? "bg-yellow-100 hover:bg-yellow-200"
-                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        }`}
                     onClick={handlePythonFileSelect}
                     disabled={!needsPythonFile}
                 >
                     {pythonFilePath ? "Python File Selected" : "Select Python Script"}
                 </button>
                 {pythonFilePath && (
-                    <p className="mt-1 text-xs break-all text-gray-600">{pythonFilePath}</p>
+                    <p>{pythonFilePath}</p>
                 )}
 
 
                 {recentPythonScripts.length > 0 && (
                     <div className="mt-2">
-                        <p className="text-xs mb-1 text-gray-600">Recently Used Scripts:</p>
-                        <ul className="space-y-1">
+                        <p>Recently Used Scripts:</p>
+                        <ul>
                             {recentPythonScripts.map((script) => (
                                 <li key={script.id}>
                                     <button
                                         disabled={!needsPythonFile}
-                                        className={`text-left text-xs break-all ${needsPythonFile
-                                            ? "text-blue-600 hover:underline"
-                                            : "text-gray-400 cursor-not-allowed"
-                                            }`}
                                         onClick={() => {
                                             if (needsPythonFile) {
                                                 setSelectedPythonScript(script);
@@ -178,7 +173,7 @@ const LaunchBlendPopup = () => {
                             setSelectedPythonScript(null);
                             setPythonFilePath("");
                         }}
-                        className="mt-2 text-xs text-red-500 hover:underline"
+                        className="mt-2 text-red-500"
                     >
                         Clear selected Python script
                     </button>
@@ -188,7 +183,7 @@ const LaunchBlendPopup = () => {
             <br />
             {installedBlenderVersions.length > 0 && (
                 <button
-                    className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+                    className="mb-4"
                     onClick={() => {
                         const defaultVersion = installedBlenderVersions.find((v) => v.is_default === true) || installedBlenderVersions[0];
                         if (defaultVersion) setSelectedVersionId(defaultVersion.id);
@@ -201,13 +196,11 @@ const LaunchBlendPopup = () => {
                 </button>
             )}
             <br />
-            <label className="block mb-2">Select Blender Version</label>
-            <ul className="space-y-2 mb-4">
+            <label className="mb-2">Select Blender Version</label>
+            <ul className="mb-4">
                 {installedBlenderVersions.map((v) => (
                     <li key={v.id}>
                         <button
-                            className={`w-full text-left px-2 py-1 border rounded hover:bg-gray-100 ${selectedVersionId === v.id ? "bg-blue-100 border-blue-400" : ""
-                                }`}
                             onClick={() => setSelectedVersionId(v.id)}
                         >
                             {v.version} {v.variant_type}
@@ -216,10 +209,9 @@ const LaunchBlendPopup = () => {
                 ))}
             </ul>
 
-            <div className="flex justify-end space-x-2">
+            <div>
                 <button
                     onClick={closeWindow}
-                    className="px-4 py-2 border rounded hover:bg-gray-100"
                 >
                     Cancel
                 </button>
@@ -228,10 +220,6 @@ const LaunchBlendPopup = () => {
                     disabled={
                         !selectedVersionId || (needsPythonFile && !selectedPythonScript)
                     }
-                    className={`px-4 py-2 rounded text-white ${selectedVersionId && (!needsPythonFile || selectedPythonScript)
-                        ? "bg-blue-500"
-                        : "bg-gray-400 cursor-not-allowed"
-                        }`}
                 >
                     Open
                 </button>

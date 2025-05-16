@@ -5,7 +5,7 @@ import Database from 'better-sqlite3';
 
 const baseDir = path.join(os.homedir(), 'AppData', 'Roaming', 'blendio-electronjs');
 if (!fs.existsSync(baseDir)) {
-  fs.mkdirSync(baseDir, { recursive: true });
+    fs.mkdirSync(baseDir, { recursive: true });
 }
 
 const dbPath = path.join(baseDir, 'test.db');

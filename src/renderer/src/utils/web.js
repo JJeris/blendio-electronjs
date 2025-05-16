@@ -27,8 +27,8 @@ export async function downloadFile(url, filePath, buttonId) {
             finishedButton.textContent = originalText;
             finishedButton.disabled = false;
         }
-    } catch (e) {
-        console.error("Download failed:", e);
+    } catch (err) {
+        console.error("Download failed:", err);
         const errorButton = document.getElementById(buttonId);
         if (errorButton) {
             errorButton.textContent = "Error";
