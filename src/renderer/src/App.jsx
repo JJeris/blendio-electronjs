@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, useLocation, useNavigate } from 'react-router-dom';
 import AppRouter from './router';
 import TitleBar from './components/titleBar/TitleBar';
 

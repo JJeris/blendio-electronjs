@@ -11,386 +11,387 @@ import { showAskNotification, showOkNotification } from '../fileSystemUtility/ha
 /**
  * ID: BV_001
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:7,14,5
  */
 export async function insertInstalledBlenderVersion(_, executableFilePath) {
-    try {
-        let parentDir = path.dirname(executableFilePath);
-        if (!parentDir) {
-            throw "Failed to get file path parent";
+    try { // C (3.d.) try
+        let parentDir = path.dirname(executableFilePath); // A (1.a.) let parentDir =;
+        if (!parentDir) { // C (3.a.) parentDir != truthy
+            throw "Failed to get file path parent"; // B (2.c.) throw
         }
-        const dirName = path.basename(parentDir);
-        const regex = /blender-(\d+\.\d+(?:\.\d+)?)-([^\-+]+)/;
-        const match = dirName.match(regex);
-        const version = match?.[1] ?? '';
-        const variantType = match?.[2] ?? ''
-        const entry = new InstalledBlenderVersion({
-            id: uuidv4(),
+        let dirName = path.basename(parentDir); // A (1.a.) let dirName =; B (2.a.) .basename()
+        let regex = /blender-(\d+\.\d+(?:\.\d+)?)-([^\-+]+)/; // A (1.a.) let regex =
+        let match = dirName.match(regex); // A (1.a.) let match =; B (2.a.) .match()
+        let version = match?.[1] ?? ''; // A (1.a.) let version =; C (3.e.) match?.; 
+        let variantType = match?.[2] ?? '' // A (1.a.) let variantType =; C (3.e.) match?.; 
+        let entry = new InstalledBlenderVersion({ // A (1.a.) let entry =; B (2.b.) new InstalledBlenderVersion
+            id: uuidv4(), // B (2.a.) uuidv4();
             version,
             variant_type: variantType,
             download_url: null,
             is_default: false,
             installation_directory_path: parentDir,
             executable_file_path: executableFilePath,
-            created: new Date().toISOString(),
-            modified: new Date().toISOString(),
-            accessed: new Date().toISOString(),
+            created: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
+            modified: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
+            accessed: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
         });
-        installedBlenderVersionRepo.insert(entry);
+        installedBlenderVersionRepo.insert(entry); // B (2.a.) installedBlenderVersionRepo.insert()
         return;
-    } catch (err) {
-        await showOkNotification(`Failed to insert installed Blender version: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to insert installed Blender version: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_002
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:8,15,6
  */
 export async function insertAndRefreshInstalledBlenderVersions(_) {
-    try {
-        const blenderRepoPaths = blenderRepoPathRepo.fetch(null, null, null);
-        for (const repoPath of blenderRepoPaths) {
-            const entries = fs.readdirSync(repoPath.repo_directory_path, { withFileTypes: true });
-            for (const entry of entries) {
-                if (!entry.isDirectory()) {
-                    continue;
+    try { // C (3.d.) try
+        let blenderRepoPaths = blenderRepoPathRepo.fetch(null, null, null); // A (1.a.) let blenderRepoPaths =; B (2.a.) blenderRepoPathRepo.fetch(
+        for (let repoPath of blenderRepoPaths) { // A (1.a.) let repoPath=;
+            let entries = fs.readdirSync(repoPath.repo_directory_path, { withFileTypes: true }); // A (1.a.) let entries =; B (2.a.) .readdirSync()
+            for (let entry of entries) { // A (1.a.) let entry=;
+                if (!entry.isDirectory()) { // C (3.a.) entry.isDirectory() != true; B (2.a.) .isDirectory()
+                    continue; // B (2.c.) continue
                 }
-                const launcherPath = path.join(repoPath.repo_directory_path, entry.name, "blender-launcher.exe");
-                if (!fs.existsSync(launcherPath)) {
-                    continue;
+                let launcherPath = path.join(repoPath.repo_directory_path, entry.name, "blender-launcher.exe"); // A (1.a.) let launcherPath =; B (2.a.) .join()
+                if (!fs.existsSync(launcherPath)) { // C (3.a.) fs.existsSync() != true; B (2.a.) .existsSync()
+                    continue; // B (2.c.) continue
                 }
-                const existingEntries = installedBlenderVersionRepo.fetch(null, null, launcherPath);
-                if (existingEntries.length > 0) {
-                    continue;
+                let existingEntries = installedBlenderVersionRepo.fetch(null, null, launcherPath); // A (1.a.) let existingEntries =; B (2.a.) installedBlenderVersionRepo.fetch()
+                if (existingEntries.length > 0) { // C (3.a.) existingEntries.length > 0
+                    continue; // B (2.c.) continue
                 }
-                await insertInstalledBlenderVersion(null, launcherPath);
+                await insertInstalledBlenderVersion(null, launcherPath); // B (2.a.) insertInstalledBlenderVersion()
             }
         }
-        const currentEntries = installedBlenderVersionRepo.fetch(null, null, null);
-        for (const entry of currentEntries) {
-            if (!fs.existsSync(entry.executable_file_path)) {
-                installedBlenderVersionRepo.remove(entry.id);
+        let currentEntries = installedBlenderVersionRepo.fetch(null, null, null); // A (1.a.) let currentEntries =; B (2.a.) installedBlenderVersionRepo.fetch()
+        for (let entry of currentEntries) { // A (1.a.) let entry =;
+            if (!fs.existsSync(entry.executable_file_path)) { // C (3.a.) fs.existsSync() != true; B (2.a.) .existsSync() 
+                installedBlenderVersionRepo.remove(entry.id); // B (2.a.) installedBlenderVersionRepo.remove()
             }
         }
         return;
-    } catch (err) {
-        await showOkNotification(`Failed to insert and refresh installed Blender version: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to insert and refresh installed Blender version: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_003
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:7,7,7
  */
 export async function updateInstalledBlenderVersion(_, id, isDefault) {
-    try {
-        const results = installedBlenderVersionRepo.fetch(id);
-        if (results.length == 0) {
-            throw "Failed to fetch installed Blender version by ID";
+    try { // C (3.d.) try
+        let results = installedBlenderVersionRepo.fetch(id); // A (1.a.) let results =; B (2.a.) installedBlenderVersionRepo.fetch()
+        if (results.length == 0) { // C (3.a.) results.length === 0
+            throw "Failed to fetch installed Blender version by ID"; // B (2.c.) throw
         }
-        const entry = results[0];
-        if (isDefault === true) {
-            entry.is_default = false;
-            installedBlenderVersionRepo.update(entry);
-        } else {
-            const entries = installedBlenderVersionRepo.fetch();
-            for (const entry of entries) {
-                const newDefault = entry.id === id;
-                if (entry.is_default !== newDefault) {
-                    entry.is_default = newDefault;
-                    installedBlenderVersionRepo.update(entry);
+        let entry = results[0]; // A (1.a.) let entry =
+        if (isDefault === true) { // C (3.a.) isDefault === true
+            entry.is_default = false; // A (1.a.) entry.is_default =
+            installedBlenderVersionRepo.update(entry); // B (2.a.) installedBlenderVersionRepo.update()
+        } else { // C (3.b.) else;
+            let entries = installedBlenderVersionRepo.fetch(); // A (1.a.) let entries =; B (2.a.) installedBlenderVersionRepo.fetch()
+            for (let entry of entries) { // A (1.a.) let entry
+                let newDefault = entry.id === id; // A (1.a.) let newDefault =; C (3.a.) entry.id === id
+                if (entry.is_default !== newDefault) { // C (3.a.) entry.is_default !== newDefault
+                    entry.is_default = newDefault; // A (1.a.) entry.is_default =
+                    installedBlenderVersionRepo.update(entry); // B (2.a.) installedBlenderVersionRepo.update()
                 }
             }
             return;
         }
-    } catch (err) {
-        await showOkNotification(`Failed to update installed Blender versions: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to update installed Blender versions: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_004
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:2,5,2
  */
 export async function fetchInstalledBlenderVersions(_, id = null, limit = null, executableFilePath = null) {
-    try {
-        let results = installedBlenderVersionRepo.fetch(id, limit, executableFilePath);
+    try { // C (3.d.) try
+        let results = installedBlenderVersionRepo.fetch(id, limit, executableFilePath); // A (1.a.) let results =; B (2.a.) installedBlenderVersionRepo.fetch()
         // Sort DESC
-        results.sort((a, b) => b.version.localeCompare(a.version));
+        results.sort((a, b) => b.version.localeCompare(a.version)); // A (1.e.) results.sort(); B (2.a.) (a, b) =>; B (2.a.) b.version.localeCompare(a.version)
         return results;
-    } catch (err) {
-        await showOkNotification(`Failed to fetch installed Blender versions: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to fetch installed Blender versions: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_005
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:3,9,5
  */
 export async function uninstallAndDeleteInstalledBlenderVersionData(_, id) {
-    try {
-        const confirmation = await showAskNotification("Are you sure you want to delete this installed Blender version?", "warning");
-        if (confirmation === false) {
-            return;
+    try { // C (3.d.) try
+        const confirmation = await showAskNotification("Are you sure you want to delete this installed Blender version?", "warning"); // A (1.a.) let confirmation =; B (2.a.) showAskNotification()
+        if (confirmation === false) { // C (3.a.) confirmation === false
+            return; // B (2.c.) priekšlaicīgs return
         }
-        let installedBlenderVersionList = installedBlenderVersionRepo.fetch(id);
-        if (!installedBlenderVersionList || installedBlenderVersionList.length === 0) {
-            throw "Failed to fetch installed Blender version by ID";
+        let installedBlenderVersionList = installedBlenderVersionRepo.fetch(id); // A (1.a.) let installedBlenderVersionList =; B (2.a.) installedBlenderVersionRepo.fetch()
+        if (!installedBlenderVersionList || installedBlenderVersionList.length === 0) { // C (3.a.) installedBlenderVersionList != truthy; C (3.a.) installedBlenderVersionList.length === 0
+            throw "Failed to fetch installed Blender version by ID"; // B (2.c.) throw
         }
-        const entry = installedBlenderVersionList[0];
-        await deleteDirectory(entry.installation_directory_path);
-        installedBlenderVersionRepo.remove(entry.id);
+        let entry = installedBlenderVersionList[0]; // A (1.a.) let entry =;
+        await deleteDirectory(entry.installation_directory_path); // B (2.a.) deleteDirectory()
+        installedBlenderVersionRepo.remove(entry.id); // B (2.a.) installedBlenderVersionRepo.remove()
         return;
-    } catch (err) {
-        await showOkNotification(`Failed to delete installed Blender version: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        installedBlenderVersionRepo.remove(entry.id); // B (2.a.) installedBlenderVersionRepo.remove()
+        await showOkNotification(`Failed to delete installed Blender version: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_006
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:10,16,11
  */
 export async function launchBlenderVersionWithLaunchArgs(_, id, launchArgumentsId = null, pythonScriptId = null) {
     try {
-        const installedBlenderVersionList = installedBlenderVersionRepo.fetch(id, null, null);
-        if (!installedBlenderVersionList || installedBlenderVersionList.length === 0) {
-            throw "Failed to fetch installed Blender version by ID";
+        let installedBlenderVersionList = installedBlenderVersionRepo.fetch(id, null, null); // A (1.a.) let installedBlenderVersionList =; B (2.a.) installedBlenderVersionRepo.fetch()
+        if (!installedBlenderVersionList || installedBlenderVersionList.length === 0) { // C (3.a.) installedBlenderVersionList != truthy; C (3.a.) installedBlenderVersionList.length === 0
+
+            throw "Failed to fetch installed Blender version by ID"; // B (2.c.) throw
         }
-        const instance = installedBlenderVersionList[0];
-        installedBlenderVersionRepo.update(instance);
-        const finalLaunchArgs = [];
-        if (launchArgumentsId != null) {
-            const launchArgumentList = launchArgumentRepo.fetch(launchArgumentsId, null, null);
-            if (!launchArgumentList || launchArgumentList.length === 0) {
-                throw "Failed to fetch launch argument by ID"
+        let instance = installedBlenderVersionList[0]; // A (1.a.) let instance =; 
+        installedBlenderVersionRepo.update(instance); // B (2.a.) installedBlenderVersionRepo.update()
+        let finalLaunchArgs = []; // A (1.a.) let finalLaunchArgs =;
+        if (launchArgumentsId != null) { // C (3.a.) launchArgumentsId != null
+            let launchArgumentList = launchArgumentRepo.fetch(launchArgumentsId, null, null); // A (1.a.) let launchArgumentList =; B (2.a.) launchArgumentRepo.fetch()
+            if (!launchArgumentList || launchArgumentList.length === 0) { // C (3.a.) launchArgumentList != truthy; C (3.a.) launchArgumentList.length === 0
+                throw "Failed to fetch launch argument by ID" // B (2.c.) throw
             }
-            const argEntry = launchArgumentList[0];
-            launchArgumentRepo.update(argEntry);
-            const parsedArgs = argEntry.argument_string.trim().split(/\s+/);
-            finalLaunchArgs.push(...parsedArgs);
+            let argEntry = launchArgumentList[0]; // A (1.a.) let argEntry =;
+            launchArgumentRepo.update(argEntry); // B (2.a.) launchArgumentRepo.update()
+            let parsedArgs = argEntry.argument_string.trim().split(/\s+/); // A (1.a.) let parsedArgs =; B (2.a.) .trim(); B (2.a.) .split()
+            finalLaunchArgs.push(...parsedArgs); // B (2.a.) .push()
         }
-        if (pythonScriptId != null) {
-            const pythonScriptList = pythonScriptRepo.fetch(pythonScriptId, null, null);
-            if (!pythonScriptList || pythonScriptList.length === 0) {
-                throw "Failed to fetch python script by ID"
+        if (pythonScriptId != null) { // C (3.a.) pythonScriptId != null
+            let pythonScriptList = pythonScriptRepo.fetch(pythonScriptId, null, null); // A (1.a.) let pythonScriptList =; B (2.a.) pythonScriptRepo.fetch()
+            if (!pythonScriptList || pythonScriptList.length === 0) { // C (3.a.) pythonScriptList != truthy; C (3.a.) pythonScriptList.length === 0
+                throw "Failed to fetch python script by ID" // B (2.c.) throw
             }
-            const scriptEntry = pythonScriptList[0];
-            pythonScriptRepo.update(scriptEntry);
-            if (!finalLaunchArgs.includes("--python")) {
-                finalLaunchArgs.push("--python", scriptEntry.script_file_path);
-            } else {
-                finalLaunchArgs.push(scriptEntry.script_file_path);
+            let scriptEntry = pythonScriptList[0]; // A (1.a.) let scriptEntry =;
+            pythonScriptRepo.update(scriptEntry); // B (2.a.) pythonScriptRepo.update()
+            if (!finalLaunchArgs.includes("--python")) { // C (3.a.) finalLaunchArgs.includes() != true; B (2.a.) .includes()
+                finalLaunchArgs.push("--python", scriptEntry.script_file_path); // A (1.e) finalLaunchArgs.push()
+            } else { // C (3.b.) else
+                finalLaunchArgs.push(scriptEntry.script_file_path); // A (1.e) finalLaunchArgs.push()
             }
         }
-        await launchExecutable(instance.executable_file_path, finalLaunchArgs);
+        await launchExecutable(instance.executable_file_path, finalLaunchArgs); // B (2.a.) launchExecutable()
         return;
-    } catch (err) {
-        console.log("aaa")
-        await showOkNotification(`Failed to launch installed Blender version: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to launch installed Blender version: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_007
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:4,10,17
  */
 export async function getDownloadableBlenderVersionData(_) {
-    try {
-        const platform = process.platform; // win32, darwin, linux
-        const response = await fetch("https://builder.blender.org/download/daily/?format=json&v=2");
-        const responseJson = await response.json();
-        const filteredData = responseJson.filter(p => {
-            if (platform === "win32") {
-                return p.bitness === 64 &&
-                    p.platform === "windows" &&
-                    p.architecture === "amd64" &&
-                    p.file_extension === "zip"
+    try { // C (3.d.) try
+        let platform = process.platform; // A (1.a.) let platform =;
+        let response = await fetch("https://builder.blender.org/download/daily/?format=json&v=2"); // A (1.a.) let response =; B (2.a.) fetch()
+        let responseJson = await response.json(); // A (1.a.) let responseJson =; B (2.a.) .json()
+        let filteredData = responseJson.filter(p => { // A (1.a.) let filteredData =; B (2.a.) .filter(); B (2.a.) p => {}
+            if (platform === "win32") { // C (3.a.) platform === "win32"
+                return p.bitness === 64 && // B (2.c.) return; C (3.a.) p.bitness === 64
+                    p.platform === "windows" && // C (3.a.) p.platform === "windows"
+                    p.architecture === "amd64" && // C (3.a.) p.architecture === "amd64"
+                    p.file_extension === "zip" // C (3.a.) p.file_extension === "zip"
             }
-            if (platform === "darwin") {
-                return p.bitness === 64 &&
-                    p.platform === 'darwin' &&
-                    p.architecture === 'arm64' &&
-                    p.file_extension === 'dmg';
+            if (platform === "darwin") { // C (3.a.) platform === "darwin"
+                return p.bitness === 64 && // B (2.c.) return; C (3.a.) p.bitness === 64
+                    p.platform === 'darwin' && // C (3.a.) p.platform === 'darwin'
+                    p.architecture === 'arm64' && // C (3.a.) p.architecture === 'arm64'
+                    p.file_extension === 'dmg'; // C (3.a.) p.file_extension === 'dmg'
             }
-            if (platform === "linux") {
-                return p.bitness === 64 &&
-                    p.platform === 'linux' &&
-                    p.architecture === 'x86_64' &&
-                    p.file_extension === 'xz';
+            if (platform === "linux") { // C (3.a.) platform === "linux"
+                return p.bitness === 64 && // B (2.c.) return; C (3.a.) p.bitness === 64 
+                    p.platform === 'linux' && // C (3.a.)  p.platform === 'linux'
+                    p.architecture === 'x86_64' && // C (3.a.) p.architecture === 'x86_64'
+                    p.file_extension === 'xz'; // C (3.a.) p.file_extension === 'xz'
             }
-            return false
+            return false // B (2.c.) return; 
         });
         return filteredData;
-    } catch (err) {
-        await showOkNotification(`Failed to fetch downloadable Blender versions: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to fetch downloadable Blender versions: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_008
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:15,24,5
  */
 export async function downloadAndInstallBlenderVersion(_, archiveFilePath, downloadableBlenderVersion) {
-    try {
-        let entry = new InstalledBlenderVersion({
-            id: uuidv4(),
+    try { // C (3.d.) try
+        let entry = new InstalledBlenderVersion({ // A (1.a.) let entry =; B (2.b.) new InstalledBlenderVersion;
+            id: uuidv4(), // B (2.a.) uuidv4();
             version: downloadableBlenderVersion.version,
             variant_type: downloadableBlenderVersion.release_cycle,
             download_url: downloadableBlenderVersion.url,
             is_default: false,
             installation_directory_path: "",
             executable_file_path: "",
-            created: new Date().toISOString(),
-            modified: new Date().toISOString(),
-            accessed: new Date().toISOString()
+            created: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
+            modified: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
+            accessed: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
         });
-        let installationDirectoryPath = await extractArchive(archiveFilePath);
-        entry.installation_directory_path = installationDirectoryPath;
-        entry.executable_file_path = path.join(installationDirectoryPath, "blender-launcher.exe");
-        await deleteFile(archiveFilePath);
-        const existingEntries = installedBlenderVersionRepo.fetch(null, null, entry.executable_file_path);
-        if (!existingEntries || existingEntries.length === 0) {
-            installedBlenderVersionRepo.insert(entry);
-            return;
-        } else {
-            const oldEntry = existingEntries[0];
-            oldEntry.version = entry.version;
-            oldEntry.variant_type = entry.variant_type;
-            oldEntry.download_url = entry.download_url;
-            oldEntry.is_default = entry.is_default;
-            oldEntry.installation_directory_path = entry.installation_directory_path;
-            oldEntry.executable_file_path = entry.executable_file_path;
-            oldEntry.created = new Date().toISOString();
-            oldEntry.modified = new Date().toISOString();
-            oldEntry.accessed = new Date().toISOString();
-            installedBlenderVersionRepo.update(oldEntry);
-            return;
+        let installationDirectoryPath = await extractArchive(archiveFilePath); // A (1.a.) let installationDirectoryPath =; B (2.a.) extractArchive()
+        entry.installation_directory_path = installationDirectoryPath; // A (1.a.) entry.installation_directory_path =
+        entry.executable_file_path = path.join(installationDirectoryPath, "blender-launcher.exe"); //  A (1.a.) entry.executable_file_path =; B (2.a.) .join()
+        await deleteFile(archiveFilePath); // B (2.b.) deleteFile()
+        let existingEntries = installedBlenderVersionRepo.fetch(null, null, entry.executable_file_path); // A (1.a.) let existingEntries =; B (2.a.) installedBlenderVersionRepo.fetch()
+        if (!existingEntries || existingEntries.length === 0) { // C (3.a.) existingEntries != truthy; C (3.a.) existingEntries.length === 0
+            installedBlenderVersionRepo.insert(entry); // B (2.a.) installedBlenderVersionRepo.insert()
+            return; // B (2.c.) priekšlaicīgs return
+        } else { // C (3.b.) else
+            let oldEntry = existingEntries[0]; // A (1.a.) let oldEntry =;
+            oldEntry.version = entry.version; // A (1.a.) oldEntry.version =
+            oldEntry.variant_type = entry.variant_type; // A (1.a.) oldEntry.variant_type =
+            oldEntry.download_url = entry.download_url; // A (1.a.) oldEntry.download_url =
+            oldEntry.is_default = entry.is_default; // A (1.a.) oldEntry.is_default =
+            oldEntry.installation_directory_path = entry.installation_directory_path; // A (1.a.) oldEntry.installation_directory_path =
+            oldEntry.executable_file_path = entry.executable_file_path; // A (1.a.) oldEntry.executable_file_path =
+            oldEntry.created = new Date().toISOString(); // A (1.a.) oldEntry.created =; B (2.b.) new Date(); B (2.a.) .toISOString()
+            oldEntry.modified = new Date().toISOString(); // A (1.a.) oldEntry.modified =; B (2.b.) new Date(); B (2.a.) .toISOString()
+            oldEntry.accessed = new Date().toISOString(); // A (1.a.) oldEntry.accessed =; B (2.b.) new Date(); B (2.a.) .toISOString()
+            installedBlenderVersionRepo.update(oldEntry); // B (2.a.) installedBlenderVersionRepo.update()
+            return; // B (2.c.) priekšlaicīgs return
         }
-    } catch (err) {
-        await showOkNotification(`Failed to insert installed Blender version: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to insert installed Blender version: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_009
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:2,14,5
  */
 export async function insertBlenderVersionInstallationLocation() {
-    try {
-        const repoDirectoryPath = await getDirectoryFromFileExplorer();
-        if (!repoDirectoryPath) {
-            return;
+    try { // C (3.d.) try
+        let repoDirectoryPath = await getDirectoryFromFileExplorer(); // A (1.a.) let repoDirectoryPath =; B (2.a.) getDirectoryFromFileExplorer()
+        if (!repoDirectoryPath) { // C (3.a.) repoDirectoryPath != truthy
+            return; // B (2.c.) priekšlaicīgs return
         }
-        const results = blenderRepoPathRepo.fetch(null, null, repoDirectoryPath);
-        if (results && results.length > 0) {
-            return;
+        let results = blenderRepoPathRepo.fetch(null, null, repoDirectoryPath);
+        if (results && results.length > 0) { // C (3.a.) results == truthy; C (3.a.) results.length > 0
+            return; // B (2.c.) priekšlaicīgs return
         }
-        const entry = new BlenderRepoPath({
-            id: uuidv4(),
+        let entry = new BlenderRepoPath({ // A (1.a.) let entry =; B (2.b.) new BlenderRepoPath;
+            id: uuidv4(), // B (2.a.) uuidv4();
             repo_directory_path: repoDirectoryPath,
             is_default: false,
-            created: new Date().toISOString(),
-            modified: new Date().toISOString(),
-            accessed: new Date().toISOString(),
+            created: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
+            modified: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
+            accessed: new Date().toISOString(), // B (2.b.) new Date(); B (2.a.) .toISOString()
         });
-        blenderRepoPathRepo.insert(entry);
+        blenderRepoPathRepo.insert(entry); // B (2.a.) blenderRepoPathRepo.insert()
         return;
-    } catch (err) {
-        await showOkNotification(`Failed to insert Blender repo path: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to insert Blender repo path: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_010
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:7,7,7
  */
 export async function updateBlenderVersionInstallationLocation(_, id, isDefault) {
-    try {
-        const results = blenderRepoPathRepo.fetch(id);
-        if (results.length == 0) {
-            throw "Failed to fetch Blender repo paths by ID";
+    try { // C (3.d.) try
+        let results = blenderRepoPathRepo.fetch(id); // A (1.a.) let results =; B (2.a.) blenderRepoPathRepo.fetch()
+        if (results.length == 0) { // C (3.a.) results.length === 0
+            throw "Failed to fetch Blender repo paths by ID"; // B (2.c.) throw
         }
-        const entry = results[0];
-        if (isDefault === true) {
-            entry.is_default = false;
-            blenderRepoPathRepo.update(entry);
-        } else {
-            const entries = blenderRepoPathRepo.fetch();
-            for (const entry of entries) {
-                const newDefault = entry.id === id;
-                if (entry.is_default !== newDefault) {
-                    entry.is_default = newDefault;
-                    blenderRepoPathRepo.update(entry);
+        let entry = results[0]; // A (1.a.) let entry =
+        if (isDefault === true) { // C (3.a.) isDefault === true
+            entry.is_default = false; // A (1.a.) entry.is_default =
+            blenderRepoPathRepo.update(entry); // B (2.a.) blenderRepoPathRepo.update()
+        } else { // C (3.b.) else;
+            let entries = blenderRepoPathRepo.fetch(); // A (1.a.) let entries =; B (2.a.) blenderRepoPathRepo.fetch()
+            for (let entry of entries) { // A (1.a.) let entry
+                let newDefault = entry.id === id; // A (1.a.) let newDefault =; C (3.a.) entry.id === id
+                if (entry.is_default !== newDefault) { // C (3.a.) entry.is_default !== newDefault
+                    entry.is_default = newDefault; // A (1.a.) entry.is_default =
+                    blenderRepoPathRepo.update(entry); // B (2.a.) blenderRepoPathRepo.update()
                 }
             }
             return;
         }
-    } catch (err) {
-        await showOkNotification(`Failed to update Blender repo path: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to update Blender repo path: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_011
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:1,3,2
  */
 export async function fetchBlenderVersionInstallationLocations(_, id = null, limit = null, repoDirectoryPath = null) {
-    try {
-        let results = blenderRepoPathRepo.fetch(id, limit, repoDirectoryPath);
+    try { // C (3.d.) try
+        let results = blenderRepoPathRepo.fetch(id, limit, repoDirectoryPath); // A (1.a.) let results =; B (2.a.) blenderRepoPathRepo.fetch()
         return results;
-    } catch (err) {
-        await showOkNotification(`Failed to fetch Blender repo paths: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to fetch Blender repo paths: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
 
 /**
  * ID: BV_012
  * Paskaidrojums:
- * ABC analīzes rezultāts:
+ * ABC analīzes rezultāts:5,10,6
  */
 export async function deleteBlenderVersionInstallationLocation(_, id) {
-    try {
-        const confirmation = await showAskNotification("Are you sure you want to delete this Blender installation location?", "warning");
-        if (confirmation === false) {
-            return;
+    try { // C (3.d.) try
+        let confirmation = await showAskNotification("Are you sure you want to delete this Blender installation location?", "warning"); // A (1.a.) let confirmation =; B (2.a.) showAskNotification()
+        if (confirmation === false) { // C (3.a.) confirmation == false
+            return; // B (2.c.) priekšlaicīgs return
         }
-        const blenderRepoPathList = blenderRepoPathRepo.fetch(id, null, null);
-        if (blenderRepoPathList.length == 0) {
-            throw "Failed to fetch Blender repo paths by ID";
+        let blenderRepoPathList = blenderRepoPathRepo.fetch(id, null, null); // A (1.a.) let blenderRepoPathList =; B (2.a.) blenderRepoPathRepo.fetch()
+        if (blenderRepoPathList.length == 0) { // C (3.a.) blenderRepoPathList.length == 0
+            throw "Failed to fetch Blender repo paths by ID"; // B (2.c.) throw
         }
-        let blenderRepoPathEntry = blenderRepoPathList[0];
-        const installedBlenderVersionList = installedBlenderVersionRepo.fetch(null, null, null);
-        for (const version of installedBlenderVersionList) {
-            if (version.installation_directory_path && version.installation_directory_path.startsWith(blenderRepoPathEntry.repo_directory_path)) {
-                installedBlenderVersionRepo.remove(version.id);
+        let blenderRepoPathEntry = blenderRepoPathList[0]; // A (1.a.) let blenderRepoPathEntry =;
+        let installedBlenderVersionList = installedBlenderVersionRepo.fetch(null, null, null); // A (1.a.) let installedBlenderVersionList =; B (2.a.) installedBlenderVersionRepo.fetch()
+        for (let version of installedBlenderVersionList) { // A (1.a.) let version =; 
+            if (version.installation_directory_path && version.installation_directory_path.startsWith(blenderRepoPathEntry.repo_directory_path)) { // C (3.a.) version.installation_directory_path == truthy; C (3.a.) version.installation_directory_path.startsWith() == true; B (2.a.) .startsWith()
+                installedBlenderVersionRepo.remove(version.id); // B (2.a.) installedBlenderVersionRepo.remove()
             }
         }
-        blenderRepoPathRepo.remove(id);
+        blenderRepoPathRepo.remove(id); // B (2.a.) installedBlenderVersionRepo.remove()
         return;
-    } catch (err) {
-        await showOkNotification(`Failed to delete Blender repo path entry: ${err}`, "error");
-        throw err;
+    } catch (err) { // C (3.d.) catch
+        await showOkNotification(`Failed to delete Blender repo path entry: ${err}`, "error"); // B (2.a.) showOkNotification()
+        throw err; // B (2.c.) throw
     }
 }
