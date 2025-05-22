@@ -6,7 +6,7 @@ export default function ProjectFiles() {
 
     useEffect(() => {
         loadProjectFiles();
-        const onCreateProjectFileConfirmed = async ({fileName, versionId}) => {
+        const onCreateProjectFileConfirmed = async ({ fileName, versionId }) => {
             try {
                 await window.api.createNewProjectFile(versionId, fileName);
                 await loadProjectFiles();
@@ -15,7 +15,7 @@ export default function ProjectFiles() {
                 console.error("Failed to create new project file from popup:", err);
             }
         };
-        const onOpenProjectFileConfirmed = async ({versionId, pythonScriptId, launchArgs}) => {
+        const onOpenProjectFileConfirmed = async ({ versionId, pythonScriptId, launchArgs }) => {
             const projectFileId = pendingOpenProjectRef.current;
             if (!projectFileId) {
                 console.error("Missing projectFileId — did you forget to set the ref?");

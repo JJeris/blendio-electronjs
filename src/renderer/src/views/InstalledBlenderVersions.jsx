@@ -7,7 +7,7 @@ export default function InstalledBlenderVersions() {
     useEffect(() => {
         loadInstalledBlenderVersions();
 
-        const onLaunchBlenderInstanceRequested = async ({pythonScriptId, launchArgs}) => {
+        const onLaunchBlenderInstanceRequested = async ({ pythonScriptId, launchArgs }) => {
             const versionId = pendingLaunchVersionRef.current;
             if (!versionId) {
                 console.error("Missing versionId — did you forget to set the ref?");

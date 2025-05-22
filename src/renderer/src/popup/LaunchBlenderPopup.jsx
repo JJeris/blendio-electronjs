@@ -15,7 +15,7 @@ const LaunchBlenderPopup = () => {
     }, []);
 
     const closeWindow = async () => {
-        window.close(); 
+        window.close();
     };
 
     const loadPythonScripts = async () => {
@@ -53,9 +53,9 @@ const LaunchBlenderPopup = () => {
 
     const handleLaunch = async () => {
         try {
-            await window.api.send("launch-blender-instance-requested", { 
-                pythonScriptId: selectedPythonScript?.id, 
-                launchArgs: launchArgs.trim() 
+            await window.api.send("launch-blender-instance-requested", {
+                pythonScriptId: selectedPythonScript?.id,
+                launchArgs: launchArgs.trim()
             });
             await closeWindow();
         } catch (err) {

@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 
 const CreateBlendPopup = () => {
-    const [installedBlenderVersions, setInstalledBlenderVersions] = useState([]);
-    const [fileName, setFileName] = useState("");
-    const [selectedVersionId, setSelectedVersionId] = useState(null);
+    const [installedBlenderVersions, setInstalledBlenderVersions] = useState([])
+    const [fileName, setFileName] = useState('')
+    const [selectedVersionId, setSelectedVersionId] = useState(null)
 
     useEffect(() => {
-        loadInstalledBlenderVersions();
-    }, []);
+        loadInstalledBlenderVersions()
+    }, [])
 
     const closeWindow = async () => {
-        window.close(); 
-    };
+        window.close()
+    }
 
     const loadInstalledBlenderVersions = async () => {
         try {
-            await window.api.insertAndRefreshInstalledBlenderVersions();
-            const versions = await window.api.fetchInstalledBlenderVersions(null, null, null);
-            setInstalledBlenderVersions(versions);
+            await window.api.insertAndRefreshInstalledBlenderVersions()
+            const versions = await window.api.fetchInstalledBlenderVersions(null, null, null)
+            setInstalledBlenderVersions(versions)
         } catch (err) {
-            setInstalledBlenderVersions([]);
-            console.error("Failed to load installed Blender versions:", err);
+            setInstalledBlenderVersions([])
+            console.error('Failed to load installed Blender versions:', err)
         }
-    };
+    }
 
     const handleCreate = async () => {
-        if (!fileName || !selectedVersionId) return;
-        await window.api.send("create-project-file-confirmed", { 
-            fileName, 
-            versionId: selectedVersionId 
-        });
-        await closeWindow();
-    };
+        if (!fileName || !selectedVersionId) return
+        await window.api.send('create-project-file-confirmed', {
+            fileName,
+            versionId: selectedVersionId
+        })
+        await closeWindow()
+    }
 
     return (
         <div className="p-4">
@@ -51,9 +51,8 @@ const CreateBlendPopup = () => {
                     <li key={v.id}>
                         <button
                             onClick={() => {
-                                    setSelectedVersionId(v.id)
-                                }
-                            }
+                                setSelectedVersionId(v.id)
+                            }}
                         >
                             {v.version} {v.variant_type}
                         </button>
@@ -62,20 +61,13 @@ const CreateBlendPopup = () => {
             </ul>
 
             <div>
-                <button
-                    onClick={closeWindow}
-                >
-                    Cancel
-                </button>
-                <button
-                    onClick={handleCreate}
-                    disabled={!fileName || !selectedVersionId}
-                >
+                <button onClick={closeWindow}>Cancel</button>
+                <button onClick={handleCreate} disabled={!fileName || !selectedVersionId}>
                     Create
                 </button>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default CreateBlendPopup;
+export default CreateBlendPopup

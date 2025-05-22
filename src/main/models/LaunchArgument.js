@@ -9,13 +9,13 @@ export class LaunchArgument {
     modified = new Date().toISOString(),
     accessed = new Date().toISOString()
   }) {
-    this.id = id;
-    this.is_default = Boolean(is_default);
-    this.argument_string = argument_string;
-    this.last_used_project_file_id = last_used_project_file_id;
-    this.last_used_python_script_id = last_used_python_script_id;
-    this.created = created;
-    this.modified = modified;
-    this.accessed = accessed;
+    this.id = id
+    this.is_default = Boolean(is_default)
+    this.argument_string = argument_string
+    this.last_used_project_file_id = last_used_project_file_id
+    this.last_used_python_script_id = last_used_python_script_id
+    this.created = created
+    this.modified = modified
+    this.accessed = accessed
   }
 }

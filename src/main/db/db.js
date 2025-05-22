@@ -1,15 +1,15 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
-import Database from 'better-sqlite3';
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
+import Database from 'better-sqlite3'
 
-const baseDir = path.join(os.homedir(), 'AppData', 'Roaming', 'blendio-electronjs');
+const baseDir = path.join(os.homedir(), 'AppData', 'Roaming', 'blendio-electronjs')
 if (!fs.existsSync(baseDir)) {
-    fs.mkdirSync(baseDir, { recursive: true });
+  fs.mkdirSync(baseDir, { recursive: true })
 }
 
-const dbPath = path.join(baseDir, 'test.db');
-const db = new Database(dbPath);
+const dbPath = path.join(baseDir, 'test.db')
+const db = new Database(dbPath)
 
 // Schema initialization
 const schemaSQL = `
@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS blender_repo_paths (
 CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_file_path ON project_files(file_path);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_python_script_file_path ON python_scripts(script_file_path);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_installed_blender_version_executable_file_path ON installed_blender_versions(executable_file_path);
-`;
+`
 
-db.exec(schemaSQL);
+db.exec(schemaSQL)
 
-export default db;
+export default db

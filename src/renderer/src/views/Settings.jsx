@@ -15,7 +15,7 @@ const Settings = () => {
         try {
             const paths = await window.api.fetchBlenderVersionInstallationLocations(null, null, null);
             setRepoPaths(paths);
-         } catch (err) {
+        } catch (err) {
             setRepoPaths([]);
             console.error("Failed to fetch paths:", err);
         }
@@ -101,7 +101,7 @@ const Settings = () => {
         }
     };
 
-        return (
+    return (
         <div className="p-4">
             <h1 className="mb-4">Settings</h1>
             <h2 className="mt-8 mb-2">Blender installation paths</h2>

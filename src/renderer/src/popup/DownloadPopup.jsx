@@ -8,7 +8,7 @@ const DownloadPopup = () => {
     }, []);
 
     const closeWindow = async () => {
-        window.close(); 
+        window.close();
     };
 
     const loadPaths = async () => {

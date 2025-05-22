@@ -68,7 +68,7 @@ const LaunchBlendPopup = () => {
     const handleOpen = async () => {
         if (!selectedVersionId) return;
         if (needsPythonFile && !selectedPythonScript) return;
-        await window.api.send("open-project-file-confirmed", { 
+        await window.api.send("open-project-file-confirmed", {
             versionId: selectedVersionId,
             pythonScriptId: selectedPythonScript?.id || null,
             launchArgs: launchArgs.trim(),
