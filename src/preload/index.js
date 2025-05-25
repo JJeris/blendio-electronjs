@@ -111,7 +111,7 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
   } catch (err) {
-    console.error(error)
+    console.error(err)
   }
 } else {
   window.electron = electronAPI

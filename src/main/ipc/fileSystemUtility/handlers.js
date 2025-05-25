@@ -12,7 +12,6 @@ import { archiveFile as zipLibArchiveFile, extract } from 'zip-lib'
 
 /**
  * ID: FSU_001
- * Paskaidrojums:
  * ABC analīzes rezultāts:7,7,5
  */
 export function instancePopupWindow(_, label, title, urlPath = '/') {
@@ -22,7 +21,7 @@ export function instancePopupWindow(_, label, title, urlPath = '/') {
       // A (1.a.) let popupWindow =; B (2.b.) new BrowserWindow
       width: 600,
       height: 400,
-      title,
+      title: title,
       show: false,
       autoHideMenuBar: true,
       resizable: true,
@@ -63,7 +62,6 @@ export function instancePopupWindow(_, label, title, urlPath = '/') {
 
 /**
  * ID: FSU_002
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,2,2
  */
 export async function identifyInternetConnection(_) {
@@ -79,7 +77,6 @@ export async function identifyInternetConnection(_) {
 
 /**
  * ID: FSU_003
- * Paskaidrojums:
  * ABC analīzes rezultāts:0,1,0
  */
 export async function showOkNotification(message, kind) {
@@ -94,7 +91,6 @@ export async function showOkNotification(message, kind) {
 
 /**
  * ID: FSU_004
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,1,1
  */
 export async function showAskNotification(message, kind) {
@@ -111,7 +107,6 @@ export async function showAskNotification(message, kind) {
 
 /**
  * ID: FSU_005
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,6,2
  */
 export async function extractArchive(archiveFilePath) {
@@ -129,7 +124,6 @@ export async function extractArchive(archiveFilePath) {
 
 /**
  * ID: FSU_006
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,4,2
  */
 export async function archiveFile(filePath) {
@@ -146,7 +140,6 @@ export async function archiveFile(filePath) {
 
 /**
  * ID: FSU_007
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,3,2
  */
 export async function launchExecutable(executableFilePath, args = []) {
@@ -162,7 +155,6 @@ export async function launchExecutable(executableFilePath, args = []) {
 
 /**
  * ID: FSU_008
- * Paskaidrojums:
  * ABC analīzes rezultāts:7,9,8
  */
 export async function openInFileExplorer(filePath) {
@@ -203,7 +195,6 @@ export async function openInFileExplorer(filePath) {
 
 /**
  * ID: FSU_009
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,4,4
  */
 export async function getFileFromFileExplorer() {
@@ -228,7 +219,6 @@ export async function getFileFromFileExplorer() {
 
 /**
  * ID: FSU_010
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,3,4
  */
 export async function getDirectoryFromFileExplorer() {
@@ -252,7 +242,6 @@ export async function getDirectoryFromFileExplorer() {
 
 /**
  * ID: FSU_011
- * Paskaidrojums:
  * ABC analīzes rezultāts:0,2,2
  */
 export async function deleteFile(filePath) {
@@ -267,7 +256,6 @@ export async function deleteFile(filePath) {
 
 /**
  * ID: FSU_012
- * Paskaidrojums:
  * ABC analīzes rezultāts:0,2,2
  */
 export async function deleteDirectory(directoryPath) {

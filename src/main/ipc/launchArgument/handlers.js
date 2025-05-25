@@ -5,7 +5,6 @@ import { showAskNotification, showOkNotification } from '../fileSystemUtility/ha
 
 /**
  * ID: KP_001
- * Paskaidrojums:
  * ABC analīzes rezultāts:5,16,3
  */
 export async function insertLaunchArgument(
@@ -47,7 +46,6 @@ export async function insertLaunchArgument(
 
 /**
  * ID: KP_002
- * Paskaidrojums:
  * ABC analīzes rezultāts:7,7,7
  */
 export async function updateLaunchArgument(_, id, isDefault) {
@@ -86,7 +84,6 @@ export async function updateLaunchArgument(_, id, isDefault) {
 
 /**
  * ID: KP_003
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,5,2
  */
 export async function fetchLaunchArguments(_, id = null, limit = null, argumentString = null) {
@@ -105,7 +102,6 @@ export async function fetchLaunchArguments(_, id = null, limit = null, argumentS
 
 /**
  * ID: KP_004
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,5,3
  */
 export async function deleteLaunchArgument(_, id) {

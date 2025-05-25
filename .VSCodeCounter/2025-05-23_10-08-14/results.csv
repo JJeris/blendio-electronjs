@@ -1,0 +1,49 @@
+"filename", "language", "YAML", "Ignore", "JSON", "HTML", "Markdown", "JavaScript", "JavaScript JSX", "PostCSS", "comment", "blank", "total"
+"c:\bakalaura_darba\blendio-electronjs\.prettierignore", "Ignore", 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"c:\bakalaura_darba\blendio-electronjs\.prettierrc.yaml", "YAML", 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"c:\bakalaura_darba\blendio-electronjs\README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\bakalaura_darba\blendio-electronjs\dev-app-update.yml", "YAML", 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"c:\bakalaura_darba\blendio-electronjs\electron-builder.yml", "YAML", 47, 0, 0, 0, 0, 0, 0, 0, 0, 1, 48
+"c:\bakalaura_darba\blendio-electronjs\electron.vite.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 19, 0, 0, 0, 2, 21
+"c:\bakalaura_darba\blendio-electronjs\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 30, 0, 0, 0, 2, 32
+"c:\bakalaura_darba\blendio-electronjs\package.json", "JSON", 0, 0, 48, 0, 0, 0, 0, 0, 0, 1, 49
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\blenderRepoPathRepo.js", "JavaScript", 0, 0, 0, 0, 0, 57, 0, 0, 1, 6, 64
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\db.js", "JavaScript", 0, 0, 0, 0, 0, 78, 0, 0, 1, 6, 85
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\index.js", "JavaScript", 0, 0, 0, 0, 0, 12, 0, 0, 0, 2, 14
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\installedBlenderVersionRepo.js", "JavaScript", 0, 0, 0, 0, 0, 75, 0, 0, 1, 6, 82
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\launchArgumentRepo.js", "JavaScript", 0, 0, 0, 0, 0, 69, 0, 0, 1, 6, 76
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\projectFileRepo.js", "JavaScript", 0, 0, 0, 0, 0, 69, 0, 0, 1, 6, 76
+"c:\bakalaura_darba\blendio-electronjs\src\main\db\pythonScriptRepo.js", "JavaScript", 0, 0, 0, 0, 0, 57, 0, 0, 1, 6, 64
+"c:\bakalaura_darba\blendio-electronjs\src\main\index.js", "JavaScript", 0, 0, 0, 0, 0, 248, 0, 0, 29, 48, 325
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\blenderVersion\handlers.js", "JavaScript", 0, 0, 0, 0, 0, 373, 0, 0, 128, 14, 515
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\fileSystemUtility\handlers.js", "JavaScript", 0, 0, 0, 0, 0, 194, 0, 0, 99, 15, 308
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\index.js", "JavaScript", 0, 0, 0, 0, 0, 74, 0, 0, 0, 2, 76
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\launchArgument\handlers.js", "JavaScript", 0, 0, 0, 0, 0, 88, 0, 0, 37, 5, 130
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\projectFile\consts.js", "JavaScript", 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 3
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\projectFile\handlers.js", "JavaScript", 0, 0, 0, 0, 0, 278, 0, 0, 92, 9, 379
+"c:\bakalaura_darba\blendio-electronjs\src\main\ipc\pythonScript\handlers.js", "JavaScript", 0, 0, 0, 0, 0, 62, 0, 0, 27, 4, 93
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\BlenderRepoPath.js", "JavaScript", 0, 0, 0, 0, 0, 17, 0, 0, 0, 1, 18
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\DownloadableBlenderVersion.js", "JavaScript", 0, 0, 0, 0, 0, 37, 0, 0, 0, 1, 38
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\InstalledBlenderVersion.js", "JavaScript", 0, 0, 0, 0, 0, 25, 0, 0, 0, 1, 26
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\LaunchArgument.js", "JavaScript", 0, 0, 0, 0, 0, 21, 0, 0, 0, 1, 22
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\ProjectFile.js", "JavaScript", 0, 0, 0, 0, 0, 21, 0, 0, 0, 1, 22
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\PythonScript.js", "JavaScript", 0, 0, 0, 0, 0, 15, 0, 0, 0, 1, 16
+"c:\bakalaura_darba\blendio-electronjs\src\main\models\index.js", "JavaScript", 0, 0, 0, 0, 0, 6, 0, 0, 0, 1, 7
+"c:\bakalaura_darba\blendio-electronjs\src\preload\index.js", "JavaScript", 0, 0, 0, 0, 0, 96, 0, 0, 14, 10, 120
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\index.html", "HTML", 0, 0, 0, 15, 0, 0, 0, 0, 1, 2, 18
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\App.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 33, 0, 0, 8, 41
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\components\TitleBar\TitleBar.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 19, 0, 3, 22
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\components\TitleBar\TitleBar.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 17, 0, 0, 3, 20
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\main.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 7, 0, 0, 2, 9
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\CreateBlendPopup.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 65, 0, 0, 9, 74
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\DownloadPopup.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 60, 0, 0, 9, 69
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\LaunchBlendPopup.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 210, 0, 1, 21, 232
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\LaunchBlenderPopup.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 165, 0, 0, 19, 184
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\router.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 24, 0, 0, 4, 28
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\styles\main.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 82, 0, 20, 102
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\utils\web.js", "JavaScript", 0, 0, 0, 0, 0, 31, 0, 0, 2, 6, 39
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\BlenderDownload.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 122, 0, 2, 9, 133
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\InstalledBlenderVersions.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 132, 0, 0, 10, 142
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\ProjectFiles.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 180, 0, 0, 14, 194
+"c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\Settings.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 212, 0, 0, 16, 228
+"Total", "-", 54, 6, 48, 15, 0, 2054, 1227, 101, 438, 318, 4261

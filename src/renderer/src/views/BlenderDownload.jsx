@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useRef, useState } from "react";
 import { downloadFile } from "../utils/web";
 

@@ -1,0 +1,102 @@
+Date : 2025-05-23 10:08:14
+Directory : c:\bakalaura_darba\blendio-electronjs
+Total : 47 files,  3505 codes, 438 comments, 318 blanks, all 4261 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JavaScript     |         26 |      2,054 |        434 |        163 |      2,651 |
+| JavaScript JSX |         12 |      1,227 |          3 |        124 |      1,354 |
+| PostCSS        |          2 |        101 |          0 |         23 |        124 |
+| YAML           |          3 |         54 |          0 |          3 |         57 |
+| JSON           |          1 |         48 |          0 |          1 |         49 |
+| HTML           |          1 |         15 |          1 |          2 |         18 |
+| Ignore         |          1 |          6 |          0 |          1 |          7 |
+| Markdown       |          1 |          0 |          0 |          1 |          1 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                         |         47 |      3,505 |        438 |        318 |      4,261 |
+| . (Files)                                                                                 |          8 |        157 |          0 |         10 |        167 |
+| src                                                                                       |         39 |      3,348 |        438 |        308 |      4,094 |
+| src\main                                                                                  |         22 |      1,878 |        418 |        143 |      2,439 |
+| src\main (Files)                                                                          |          1 |        248 |         29 |         48 |        325 |
+| src\main\db                                                                               |          7 |        417 |          6 |         38 |        461 |
+| src\main\ipc                                                                              |          7 |      1,071 |        383 |         50 |      1,504 |
+| src\main\ipc (Files)                                                                      |          1 |         74 |          0 |          2 |         76 |
+| src\main\ipc\blenderVersion                                                               |          1 |        373 |        128 |         14 |        515 |
+| src\main\ipc\fileSystemUtility                                                            |          1 |        194 |         99 |         15 |        308 |
+| src\main\ipc\launchArgument                                                               |          1 |         88 |         37 |          5 |        130 |
+| src\main\ipc\projectFile                                                                  |          2 |        280 |         92 |         10 |        382 |
+| src\main\ipc\pythonScript                                                                 |          1 |         62 |         27 |          4 |         93 |
+| src\main\models                                                                           |          7 |        142 |          0 |          7 |        149 |
+| src\preload                                                                               |          1 |         96 |         14 |         10 |        120 |
+| src\renderer                                                                              |         16 |      1,374 |          6 |        155 |      1,535 |
+| src\renderer (Files)                                                                      |          1 |         15 |          1 |          2 |         18 |
+| src\renderer\src                                                                          |         15 |      1,359 |          5 |        153 |      1,517 |
+| src\renderer\src (Files)                                                                  |          3 |         64 |          0 |         14 |         78 |
+| src\renderer\src\components                                                               |          2 |         36 |          0 |          6 |         42 |
+| src\renderer\src\components\TitleBar                                                      |          2 |         36 |          0 |          6 |         42 |
+| src\renderer\src\popup                                                                    |          4 |        500 |          1 |         58 |        559 |
+| src\renderer\src\styles                                                                   |          1 |         82 |          0 |         20 |        102 |
+| src\renderer\src\utils                                                                    |          1 |         31 |          2 |          6 |         39 |
+| src\renderer\src\views                                                                    |          4 |        646 |          2 |         49 |        697 |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                  | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| c:\bakalaura_darba\blendio-electronjs\.prettierignore                                     | Ignore         |          6 |          0 |          1 |          7 |
+| c:\bakalaura_darba\blendio-electronjs\.prettierrc.yaml                                    | YAML           |          4 |          0 |          1 |          5 |
+| c:\bakalaura_darba\blendio-electronjs\README.md                                           | Markdown       |          0 |          0 |          1 |          1 |
+| c:\bakalaura_darba\blendio-electronjs\dev-app-update.yml                                  | YAML           |          3 |          0 |          1 |          4 |
+| c:\bakalaura_darba\blendio-electronjs\electron-builder.yml                                | YAML           |         47 |          0 |          1 |         48 |
+| c:\bakalaura_darba\blendio-electronjs\electron.vite.config.mjs                            | JavaScript     |         19 |          0 |          2 |         21 |
+| c:\bakalaura_darba\blendio-electronjs\eslint.config.mjs                                   | JavaScript     |         30 |          0 |          2 |         32 |
+| c:\bakalaura_darba\blendio-electronjs\package.json                                        | JSON           |         48 |          0 |          1 |         49 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\blenderRepoPathRepo.js                  | JavaScript     |         57 |          1 |          6 |         64 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\db.js                                   | JavaScript     |         78 |          1 |          6 |         85 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\index.js                                | JavaScript     |         12 |          0 |          2 |         14 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\installedBlenderVersionRepo.js          | JavaScript     |         75 |          1 |          6 |         82 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\launchArgumentRepo.js                   | JavaScript     |         69 |          1 |          6 |         76 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\projectFileRepo.js                      | JavaScript     |         69 |          1 |          6 |         76 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\db\pythonScriptRepo.js                     | JavaScript     |         57 |          1 |          6 |         64 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\index.js                                   | JavaScript     |        248 |         29 |         48 |        325 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\blenderVersion\handlers.js             | JavaScript     |        373 |        128 |         14 |        515 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\fileSystemUtility\handlers.js          | JavaScript     |        194 |         99 |         15 |        308 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\index.js                               | JavaScript     |         74 |          0 |          2 |         76 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\launchArgument\handlers.js             | JavaScript     |         88 |         37 |          5 |        130 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\projectFile\consts.js                  | JavaScript     |          2 |          0 |          1 |          3 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\projectFile\handlers.js                | JavaScript     |        278 |         92 |          9 |        379 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\ipc\pythonScript\handlers.js               | JavaScript     |         62 |         27 |          4 |         93 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\BlenderRepoPath.js                  | JavaScript     |         17 |          0 |          1 |         18 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\DownloadableBlenderVersion.js       | JavaScript     |         37 |          0 |          1 |         38 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\InstalledBlenderVersion.js          | JavaScript     |         25 |          0 |          1 |         26 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\LaunchArgument.js                   | JavaScript     |         21 |          0 |          1 |         22 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\ProjectFile.js                      | JavaScript     |         21 |          0 |          1 |         22 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\PythonScript.js                     | JavaScript     |         15 |          0 |          1 |         16 |
+| c:\bakalaura_darba\blendio-electronjs\src\main\models\index.js                            | JavaScript     |          6 |          0 |          1 |          7 |
+| c:\bakalaura_darba\blendio-electronjs\src\preload\index.js                                | JavaScript     |         96 |         14 |         10 |        120 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\index.html                             | HTML           |         15 |          1 |          2 |         18 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\App.jsx                            | JavaScript JSX |         33 |          0 |          8 |         41 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\components\TitleBar\TitleBar.css   | PostCSS        |         19 |          0 |          3 |         22 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\components\TitleBar\TitleBar.jsx   | JavaScript JSX |         17 |          0 |          3 |         20 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\main.jsx                           | JavaScript JSX |          7 |          0 |          2 |          9 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\CreateBlendPopup.jsx         | JavaScript JSX |         65 |          0 |          9 |         74 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\DownloadPopup.jsx            | JavaScript JSX |         60 |          0 |          9 |         69 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\LaunchBlendPopup.jsx         | JavaScript JSX |        210 |          1 |         21 |        232 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\popup\LaunchBlenderPopup.jsx       | JavaScript JSX |        165 |          0 |         19 |        184 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\router.jsx                         | JavaScript JSX |         24 |          0 |          4 |         28 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\styles\main.css                    | PostCSS        |         82 |          0 |         20 |        102 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\utils\web.js                       | JavaScript     |         31 |          2 |          6 |         39 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\BlenderDownload.jsx          | JavaScript JSX |        122 |          2 |          9 |        133 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\InstalledBlenderVersions.jsx | JavaScript JSX |        132 |          0 |         10 |        142 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\ProjectFiles.jsx             | JavaScript JSX |        180 |          0 |         14 |        194 |
+| c:\bakalaura_darba\blendio-electronjs\src\renderer\src\views\Settings.jsx                 | JavaScript JSX |        212 |          0 |         16 |        228 |
+| Total                                                                                     |                |      3,505 |        438 |        318 |      4,261 |
++-------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

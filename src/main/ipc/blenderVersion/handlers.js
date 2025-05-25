@@ -21,7 +21,6 @@ import { showAskNotification, showOkNotification } from '../fileSystemUtility/ha
 
 /**
  * ID: BV_001
- * Paskaidrojums:
  * ABC analīzes rezultāts:7,14,5
  */
 export async function insertInstalledBlenderVersion(_, executableFilePath) {
@@ -61,7 +60,6 @@ export async function insertInstalledBlenderVersion(_, executableFilePath) {
 
 /**
  * ID: BV_002
- * Paskaidrojums:
  * ABC analīzes rezultāts:8,15,6
  */
 export async function insertAndRefreshInstalledBlenderVersions(_) {
@@ -115,7 +113,6 @@ export async function insertAndRefreshInstalledBlenderVersions(_) {
 
 /**
  * ID: BV_003
- * Paskaidrojums:
  * ABC analīzes rezultāts:7,7,7
  */
 export async function updateInstalledBlenderVersion(_, id, isDefault) {
@@ -154,7 +151,6 @@ export async function updateInstalledBlenderVersion(_, id, isDefault) {
 
 /**
  * ID: BV_004
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,5,2
  */
 export async function fetchInstalledBlenderVersions(
@@ -178,7 +174,6 @@ export async function fetchInstalledBlenderVersions(
 
 /**
  * ID: BV_005
- * Paskaidrojums:
  * ABC analīzes rezultāts:3,9,5
  */
 export async function uninstallAndDeleteInstalledBlenderVersionData(_, id) {
@@ -211,7 +206,6 @@ export async function uninstallAndDeleteInstalledBlenderVersionData(_, id) {
 
 /**
  * ID: BV_006
- * Paskaidrojums:
  * ABC analīzes rezultāts:10,16,11
  */
 export async function launchBlenderVersionWithLaunchArgs(
@@ -270,7 +264,6 @@ export async function launchBlenderVersionWithLaunchArgs(
 
 /**
  * ID: BV_007
- * Paskaidrojums:
  * ABC analīzes rezultāts:4,10,17
  */
 export async function getDownloadableBlenderVersionData(_) {
@@ -320,7 +313,6 @@ export async function getDownloadableBlenderVersionData(_) {
 
 /**
  * ID: BV_008
- * Paskaidrojums:
  * ABC analīzes rezultāts:15,24,5
  */
 export async function downloadAndInstallBlenderVersion(
@@ -376,7 +368,6 @@ export async function downloadAndInstallBlenderVersion(
 
 /**
  * ID: BV_009
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,14,5
  */
 export async function insertBlenderVersionInstallationLocation() {
@@ -412,7 +403,6 @@ export async function insertBlenderVersionInstallationLocation() {
 
 /**
  * ID: BV_010
- * Paskaidrojums:
  * ABC analīzes rezultāts:7,7,7
  */
 export async function updateBlenderVersionInstallationLocation(_, id, isDefault) {
@@ -451,7 +441,6 @@ export async function updateBlenderVersionInstallationLocation(_, id, isDefault)
 
 /**
  * ID: BV_011
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,3,2
  */
 export async function fetchBlenderVersionInstallationLocations(
@@ -473,7 +462,6 @@ export async function fetchBlenderVersionInstallationLocations(
 
 /**
  * ID: BV_012
- * Paskaidrojums:
  * ABC analīzes rezultāts:5,10,6
  */
 export async function deleteBlenderVersionInstallationLocation(_, id) {

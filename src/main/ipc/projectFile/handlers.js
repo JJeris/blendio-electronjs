@@ -24,7 +24,6 @@ import { IMPORT_BPY, SAVE_AS_MAINFILE } from './consts'
 
 /**
  * ID: PF_001
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,12,2
  */
 export async function insertBlendFile(_, filePath) {
@@ -52,7 +51,6 @@ export async function insertBlendFile(_, filePath) {
 
 /**
  * ID: PF_002
- * Paskaidrojums:
  * ABC analīzes rezultāts:26,42,16
  */
 export async function insertAndRefreshBlendFiles(_) {
@@ -159,7 +157,6 @@ export async function insertAndRefreshBlendFiles(_) {
 
 /**
  * ID: PF_003
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,5,2
  */
 export async function fetchBlendFiles(_, id = null, limit = null, filePath = null) {
@@ -178,7 +175,6 @@ export async function fetchBlendFiles(_, id = null, limit = null, filePath = nul
 
 /**
  * ID: PF_004
- * Paskaidrojums:
  * ABC analīzes rezultāts: 3,8,5
  */
 export async function deleteBlendFile(_, id) {
@@ -211,7 +207,6 @@ export async function deleteBlendFile(_, id) {
 
 /**
  * ID: PF_005
- * Paskaidrojums:
  * ABC analīzes rezultāts:11,21,14
  */
 export async function openBlendFile(
@@ -283,7 +278,6 @@ export async function openBlendFile(
 
 /**
  * ID: PF_006
- * Paskaidrojums:
  * ABC analīzes rezultāts:6,10,6
  */
 export async function createNewProjectFile(_, installedBlenderVersionId, fileName) {
@@ -332,7 +326,6 @@ ${SAVE_AS_MAINFILE}
 
 /**
  * ID: PF_007
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,5,4
  */
 export async function revealProjectFileInLocalFileSystem(_, id) {
@@ -355,7 +348,6 @@ export async function revealProjectFileInLocalFileSystem(_, id) {
 
 /**
  * ID: PF_008
- * Paskaidrojums:
  * ABC analīzes rezultāts:3,6,4
  */
 export async function createProjectFileArchiveFile(_, id) {

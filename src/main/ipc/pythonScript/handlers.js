@@ -10,7 +10,6 @@ import {
 
 /**
  * ID: PS_001
- * Paskaidrojums:
  * ABC analīzes rezultāts:6,20,4
  */
 export async function insertPythonScript(_) {
@@ -49,7 +48,6 @@ export async function insertPythonScript(_) {
 
 /**
  * ID: PS_002
- * Paskaidrojums:
  * ABC analīzes rezultāts:2,5,2
  */
 export async function fetchPythonScripts(_, id = null, limit = null, scriptFilePath = null) {
@@ -68,7 +66,6 @@ export async function fetchPythonScripts(_, id = null, limit = null, scriptFileP
 
 /**
  * ID: PS_003
- * Paskaidrojums:
  * ABC analīzes rezultāts:1,5,3
  */
 export async function deletePythonScript(_, id) {
